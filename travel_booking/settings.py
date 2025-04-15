@@ -175,6 +175,11 @@ ACCOUNT_SIGNUP_FIELDS = ['email', 'password1', 'password2']
 ACCOUNT_LOGIN_METHODS = {'email'}  # instead of ACCOUNT_AUTHENTICATION_METHOD
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']  # 👈 this points to your existing static/
+STATIC_ROOT = BASE_DIR / 'staticfiles'    # 👈 where collectstatic dumps everything
+
+
 
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 CSRF_TRUSTED_ORIGINS = [
