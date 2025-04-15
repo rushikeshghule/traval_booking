@@ -173,6 +173,7 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 # CSRF_COOKIE_HTTPONLY = True
 ACCOUNT_SIGNUP_FIELDS = ['email', 'password1', 'password2']
 ACCOUNT_LOGIN_METHODS = {'email'}  # instead of ACCOUNT_AUTHENTICATION_METHOD
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 SOCIALACCOUNT_EMAIL_REQUIRED = False
