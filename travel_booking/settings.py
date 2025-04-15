@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-9-!+gc5)^28q^%^0#9!t)eb71yh$++sb)nz)iri-fx7s!v1qn6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', '.up.railway.app','https://travalbooking-production.up.railway.app/']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', '.up.railway.app','https://travalbooking-production.up.railway.app']
 
 
 
