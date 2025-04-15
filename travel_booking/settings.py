@@ -168,6 +168,9 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_VERIFICATION = "optional"
 SOCIALACCOUNT_AUTO_SIGNUP = True
+CSRF_COOKIE_SECURE = False  # For development purposes only (don't use this in production)
+CSRF_COOKIE_HTTPONLY = True
+
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 
 # Crispy Forms Settings
