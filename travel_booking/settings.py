@@ -27,7 +27,7 @@ DEBUG = False
 
 
 
-ALLOWED_HOSTS = ['*','0.0.0.0', '127.0.0.1', 'localhost', '.up.railway.app','https://travalbooking-production.up.railway.app']
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -61,7 +61,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -172,6 +172,10 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 CSRF_COOKIE_HTTPONLY = True
 
 SOCIALACCOUNT_EMAIL_REQUIRED = False
+CSRF_TRUSTED_ORIGINS = [
+    'https://travalbooking-production.up.railway.app/',  # Railway domain
+    'http://localhost:8000',  # For local dev (if you run locally)
+]
 
 # Crispy Forms Settings
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
