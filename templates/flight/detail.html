@@ -1,0 +1,552 @@
+{% extends 'base.html' %}
+
+{% block title %}Flight Details - Travel Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'flight:search' %}">Flight Search</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Flight Details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-plane me-2"></i>Flight Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-3 mb-md-0">
+                            {% if flight.airline.logo %}
+                                <img src="{{ flight.airline.logo.url }}" alt="{{ flight.airline.name }}" class="img-fluid mb-2" style="max-height: 60px;">
+                            {% else %}
+                                <i class="fas fa-plane fa-3x mb-2 text-primary"></i>
+                            {% endif %}
+                            <h5 class="mb-0">{{ flight.airline.name }}</h5>
+                            <p class="text-muted">{{ flight.flight_number }}</p>
+                        </div>
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <div class="text-center">
+                                <h5 class="mb-0">{{ flight.departure_time|date:"h:i A" }}</h5>
+                                <p class="text-muted mb-1">{{ flight.departure_time|date:"d M Y" }}</p>
+                                <h6>{{ flight.source.city }} ({{ flight.source.code }})</h6>
+                                <small class="text-muted">{{ flight.source.name }}</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <div class="text-center">
+                                <div class="d-flex flex-column align-items-center">
+                                    <p class="mb-1 text-muted small">{{ flight.duration }}</p>
+                                    <div class="flight-path">
+                                        <i class="fas fa-circle text-primary"></i>
+                                        <div class="flight-line"></div>
+                                        <i class="fas fa-plane text-primary"></i>
+                                        <div class="flight-line"></div>
+                                        <i class="fas fa-circle text-primary"></i>
+                                    </div>
+                                    <p class="mb-0 text-muted small mt-1">{{ flight.get_flight_type_display }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h5 class="mb-0">{{ flight.arrival_time|date:"h:i A" }}</h5>
+                                <p class="text-muted mb-1">{{ flight.arrival_time|date:"d M Y" }}</p>
+                                <h6>{{ flight.destination.city }} ({{ flight.destination.code }})</h6>
+                                <small class="text-muted">{{ flight.destination.name }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Flight Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <h6 class="text-muted">Flight Details</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th scope="row">Airline</th>
+                                    <td>{{ flight.airline.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Flight Number</th>
+                                    <td>{{ flight.flight_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Aircraft</th>
+                                    <td>{{ flight.aircraft_type|default:"Standard Aircraft" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Class</th>
+                                    <td>{{ travel_class|title }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Duration</th>
+                                    <td>{{ flight.duration }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <h6 class="text-muted">Departure</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th scope="row">Date</th>
+                                    <td>{{ flight.departure_time|date:"d M Y" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Time</th>
+                                    <td>{{ flight.departure_time|date:"h:i A" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Airport</th>
+                                    <td>{{ flight.source.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Terminal</th>
+                                    <td>{{ flight.source_terminal|default:"To be announced" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">City</th>
+                                    <td>{{ flight.source.city }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Arrival</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th scope="row">Date</th>
+                                    <td>{{ flight.arrival_time|date:"d M Y" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Time</th>
+                                    <td>{{ flight.arrival_time|date:"h:i A" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Airport</th>
+                                    <td>{{ flight.destination.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Terminal</th>
+                                    <td>{{ flight.destination_terminal|default:"To be announced" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">City</th>
+                                    <td>{{ flight.destination.city }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <h6 class="border-bottom pb-2 mb-3">Baggage Information</h6>
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-suitcase-rolling fa-2x text-primary"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Checked Baggage</h6>
+                                    <p class="mb-0 text-muted">1 x 23kg</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-briefcase fa-2x text-primary"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Cabin Baggage</h6>
+                                    <p class="mb-0 text-muted">1 x 7kg</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-info-circle fa-2x text-primary"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Additional Info</h6>
+                                    <p class="mb-0 text-muted">Baggage rules vary by fare</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="border-bottom pb-2 mb-3">In-flight Services</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-utensils fa-2x mb-2 text-primary"></i>
+                                <p class="mb-0">Meals</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-film fa-2x mb-2 text-primary"></i>
+                                <p class="mb-0">Entertainment</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-wifi fa-2x mb-2 text-primary"></i>
+                                <p class="mb-0">Wi-Fi</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="text-center">
+                                <i class="fas fa-charging-station fa-2x mb-2 text-primary"></i>
+                                <p class="mb-0">Power Outlets</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Passenger Information</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'flight:booking' pk=flight.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="travel_class" value="{{ travel_class }}">
+                        <input type="hidden" name="passengers" value="{{ passengers }}">
+                        
+                        {% for i in passenger_range %}
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Passenger {{ i }}</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-2 mb-3">
+                                        <label for="title_{{ i }}" class="form-label">Title</label>
+                                        <select name="title_{{ i }}" id="title_{{ i }}" class="form-select" required>
+                                            <option value="">Select</option>
+                                            <option value="Mr">Mr</option>
+                                            <option value="Mrs">Mrs</option>
+                                            <option value="Ms">Ms</option>
+                                            <option value="Miss">Miss</option>
+                                            <option value="Dr">Dr</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-5 mb-3">
+                                        <label for="first_name_{{ i }}" class="form-label">First Name</label>
+                                        <input type="text" name="first_name_{{ i }}" id="first_name_{{ i }}" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-5 mb-3">
+                                        <label for="last_name_{{ i }}" class="form-label">Last Name</label>
+                                        <input type="text" name="last_name_{{ i }}" id="last_name_{{ i }}" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="dob_{{ i }}" class="form-label">Date of Birth</label>
+                                        <input type="date" name="dob_{{ i }}" id="dob_{{ i }}" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="passport_{{ i }}" class="form-label">Passport Number</label>
+                                        <input type="text" name="passport_{{ i }}" id="passport_{{ i }}" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" value="1" id="special_assistance_{{ i }}" name="special_assistance_{{ i }}">
+                                    <label class="form-check-label" for="special_assistance_{{ i }}">
+                                        Requires special assistance
+                                    </label>
+                                </div>
+                                <div id="special_assistance_details_{{ i }}" class="mb-3 d-none">
+                                    <label for="special_assistance_text_{{ i }}" class="form-label">Special Assistance Details</label>
+                                    <textarea class="form-control" id="special_assistance_text_{{ i }}" name="special_assistance_text_{{ i }}" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Contact Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">Email Address</label>
+                                        <input type="email" name="email" id="email" class="form-control" {% if user.is_authenticated %}value="{{ user.email }}"{% endif %} required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="phone" class="form-label">Phone Number</label>
+                                        <input type="tel" name="phone" id="phone" class="form-control" {% if user.is_authenticated %}value="{{ user.phone_number }}"{% endif %} required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Add-ons & Preferences</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" value="1" id="meal_preference" name="meal_preference">
+                                    <label class="form-check-label" for="meal_preference">
+                                        Special meal preferences
+                                    </label>
+                                </div>
+                                <div id="meal_preference_details" class="mb-3 d-none">
+                                    <select name="meal_type" id="meal_type" class="form-select">
+                                        <option value="">Select Meal Type</option>
+                                        <option value="vegetarian">Vegetarian</option>
+                                        <option value="vegan">Vegan</option>
+                                        <option value="kosher">Kosher</option>
+                                        <option value="halal">Halal</option>
+                                        <option value="diabetic">Diabetic</option>
+                                        <option value="gluten_free">Gluten Free</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" value="1" id="travel_insurance" name="travel_insurance">
+                                    <label class="form-check-label" for="travel_insurance">
+                                        Add travel insurance (+$25)
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" value="1" id="priority_boarding" name="priority_boarding">
+                                    <label class="form-check-label" for="priority_boarding">
+                                        Priority boarding (+$15)
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" value="1" id="extra_baggage" name="extra_baggage">
+                                    <label class="form-check-label" for="extra_baggage">
+                                        Extra baggage allowance (+$50)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" value="1" id="terms" name="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="{% url 'core:terms' %}" target="_blank">Terms and Conditions</a> and <a href="{% url 'core:privacy' %}" target="_blank">Privacy Policy</a>
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4 sticky-top" style="top: 20px; z-index: 0;">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Price Summary</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <td>Base fare ({{ passengers }} x ${{ flight.base_price }})</td>
+                            <td class="text-end">${{ base_total }}</td>
+                        </tr>
+                        <tr>
+                            <td>Taxes & Fees</td>
+                            <td class="text-end">${{ taxes }}</td>
+                        </tr>
+                        <tr id="insurance_row" class="d-none">
+                            <td>Travel Insurance</td>
+                            <td class="text-end">$<span id="insurance_price">0</span></td>
+                        </tr>
+                        <tr id="priority_row" class="d-none">
+                            <td>Priority Boarding</td>
+                            <td class="text-end">$<span id="priority_price">0</span></td>
+                        </tr>
+                        <tr id="baggage_row" class="d-none">
+                            <td>Extra Baggage</td>
+                            <td class="text-end">$<span id="baggage_price">0</span></td>
+                        </tr>
+                        <tr>
+                            <th>Total</th>
+                            <th class="text-end text-primary">$<span id="total_price">{{ total_price }}</span></th>
+                        </tr>
+                    </table>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> The total amount will be charged to your card after confirmation.
+                    </div>
+                    
+                    <div class="d-flex justify-content-center mb-3">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1200px-PayPal.svg.png" alt="PayPal" class="me-2" height="24">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/800px-Visa_Inc._logo.svg.png" alt="Visa" class="me-2" height="24">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/800px-Mastercard-logo.svg.png" alt="Mastercard" class="me-2" height="24">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/800px-American_Express_logo_%282018%29.svg.png" alt="American Express" height="24">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Need Help?</h5>
+                </div>
+                <div class="card-body">
+                    <p><i class="fas fa-phone me-2"></i> 24/7 Support: +1 234 567 8900</p>
+                    <p><i class="fas fa-envelope me-2"></i> support@travelbooking.com</p>
+                    
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="{% url 'core:faq' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-question-circle me-1"></i> View FAQs
+                        </a>
+                        <a href="{% url 'core:contact' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-paper-plane me-1"></i> Contact Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.flight-path {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.flight-line {
+    height: 2px;
+    background-color: #ccc;
+    flex-grow: 1;
+    margin: 0 5px;
+}
+</style>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Special assistance toggle
+        const toggleSpecialAssistance = () => {
+            {% for i in passenger_range %}
+            const specialAssistance{{ i }} = document.getElementById('special_assistance_{{ i }}');
+            const specialAssistanceDetails{{ i }} = document.getElementById('special_assistance_details_{{ i }}');
+            
+            if (specialAssistance{{ i }}) {
+                specialAssistance{{ i }}.addEventListener('change', function() {
+                    if (this.checked) {
+                        specialAssistanceDetails{{ i }}.classList.remove('d-none');
+                    } else {
+                        specialAssistanceDetails{{ i }}.classList.add('d-none');
+                    }
+                });
+            }
+            {% endfor %}
+        };
+        
+        // Meal preference toggle
+        const mealPreference = document.getElementById('meal_preference');
+        const mealPreferenceDetails = document.getElementById('meal_preference_details');
+        
+        if (mealPreference) {
+            mealPreference.addEventListener('change', function() {
+                if (this.checked) {
+                    mealPreferenceDetails.classList.remove('d-none');
+                } else {
+                    mealPreferenceDetails.classList.add('d-none');
+                }
+            });
+        }
+        
+        // Calculate total price
+        const calculateTotal = () => {
+            let total = {{ total_price }};
+            const totalPriceElement = document.getElementById('total_price');
+            
+            // Insurance
+            const travelInsurance = document.getElementById('travel_insurance');
+            const insuranceRow = document.getElementById('insurance_row');
+            const insurancePrice = document.getElementById('insurance_price');
+            
+            if (travelInsurance && travelInsurance.checked) {
+                insuranceRow.classList.remove('d-none');
+                insurancePrice.textContent = '25';
+                total += 25;
+            } else if (insuranceRow) {
+                insuranceRow.classList.add('d-none');
+                insurancePrice.textContent = '0';
+            }
+            
+            // Priority boarding
+            const priorityBoarding = document.getElementById('priority_boarding');
+            const priorityRow = document.getElementById('priority_row');
+            const priorityPrice = document.getElementById('priority_price');
+            
+            if (priorityBoarding && priorityBoarding.checked) {
+                priorityRow.classList.remove('d-none');
+                priorityPrice.textContent = '15';
+                total += 15;
+            } else if (priorityRow) {
+                priorityRow.classList.add('d-none');
+                priorityPrice.textContent = '0';
+            }
+            
+            // Extra baggage
+            const extraBaggage = document.getElementById('extra_baggage');
+            const baggageRow = document.getElementById('baggage_row');
+            const baggagePrice = document.getElementById('baggage_price');
+            
+            if (extraBaggage && extraBaggage.checked) {
+                baggageRow.classList.remove('d-none');
+                baggagePrice.textContent = '50';
+                total += 50;
+            } else if (baggageRow) {
+                baggageRow.classList.add('d-none');
+                baggagePrice.textContent = '0';
+            }
+            
+            totalPriceElement.textContent = total.toFixed(2);
+        };
+        
+        // Add event listeners for add-ons
+        const addOns = [
+            document.getElementById('travel_insurance'),
+            document.getElementById('priority_boarding'),
+            document.getElementById('extra_baggage')
+        ];
+        
+        addOns.forEach(addOn => {
+            if (addOn) {
+                addOn.addEventListener('change', calculateTotal);
+            }
+        });
+        
+        // Initialize functions
+        toggleSpecialAssistance();
+        calculateTotal();
+    });
+</script>
+{% endblock %}
+{% endblock %}

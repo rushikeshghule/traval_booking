@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+
+{% block title %}My Bookings - Travel Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="mb-3">My Bookings</h3>
+                    <p class="text-muted">View and manage all your bookings in one place.</p>
+                    
+                    <ul class="nav nav-tabs" id="bookingTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="bus-tab" data-bs-toggle="tab" data-bs-target="#bus" type="button" role="tab" aria-controls="bus" aria-selected="true">
+                                <i class="fas fa-bus me-2"></i>Bus Bookings <span class="badge bg-primary">{{ bus_bookings.count }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="flight-tab" data-bs-toggle="tab" data-bs-target="#flight" type="button" role="tab" aria-controls="flight" aria-selected="false">
+                                <i class="fas fa-plane me-2"></i>Flight Bookings <span class="badge bg-primary">{{ flight_bookings.count }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="train-tab" data-bs-toggle="tab" data-bs-target="#train" type="button" role="tab" aria-controls="train" aria-selected="false">
+                                <i class="fas fa-train me-2"></i>Train Bookings <span class="badge bg-primary">{{ train_bookings.count }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="hotel-tab" data-bs-toggle="tab" data-bs-target="#hotel" type="button" role="tab" aria-controls="hotel" aria-selected="false">
+                                <i class="fas fa-hotel me-2"></i>Hotel Bookings <span class="badge bg-primary">{{ hotel_bookings.count }}</span>
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content p-3 border border-top-0 rounded-bottom" id="bookingTabsContent">
+                        <div class="tab-pane fade show active" id="bus" role="tabpanel" aria-labelledby="bus-tab">
+                            {% if bus_bookings %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Booking Reference</th>
+                                                <th>Route</th>
+                                                <th>Departure Date</th>
+                                                <th>Status</th>
+                                                <th>Payment Status</th>
+                                                <th>Total Price</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for booking in bus_bookings %}
+                                                <tr>
+                                                    <td><strong>{{ booking.booking_reference }}</strong></td>
+                                                    <td>{{ booking.schedule.route }}</td>
+                                                    <td>{{ booking.schedule.departure_time|date:"d M Y, h:i A" }}</td>
+                                                    <td>
+                                                        <span class="badge bg-{% if booking.status == 'confirmed' %}success{% elif booking.status == 'pending' %}warning{% elif booking.status == 'cancelled' %}danger{% else %}info{% endif %}">
+                                                            {{ booking.get_status_display }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-{% if booking.payment_status == 'paid' %}success{% elif booking.payment_status == 'pending' %}warning{% elif booking.payment_status == 'refunded' %}info{% else %}danger{% endif %}">
+                                                            {{ booking.get_payment_status_display }}
+                                                        </span>
+                                                    </td>
+                                                    <td>${{ booking.total_price }}</td>
+                                                    <td>
+                                                        <div class="btn-group">
+                                                            <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                                            {% if booking.status == 'pending' %}
+                                                                <a href="#" class="btn btn-sm btn-outline-danger">Cancel</a>
+                                                            {% endif %}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-bus fa-3x mb-3 text-muted"></i>
+                                    <h5>No Bus Bookings Found</h5>
+                                    <p class="text-muted">You haven't made any bus bookings yet.</p>
+                                    <a href="{% url 'bus:search' %}" class="btn btn-primary">Book a Bus</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="tab-pane fade" id="flight" role="tabpanel" aria-labelledby="flight-tab">
+                            {% if flight_bookings %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Booking Reference</th>
+                                                <th>Flight</th>
+                                                <th>Departure</th>
+                                                <th>Status</th>
+                                                <th>Payment Status</th>
+                                                <th>Total Price</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for booking in flight_bookings %}
+                                                <tr>
+                                                    <td><strong>{{ booking.booking_reference }}</strong></td>
+                                                    <td>{{ booking.flight }}</td>
+                                                    <td>{{ booking.flight.departure_time|date:"d M Y, h:i A" }}</td>
+                                                    <td>
+                                                        <span class="badge bg-{% if booking.status == 'confirmed' %}success{% elif booking.status == 'pending' %}warning{% elif booking.status == 'cancelled' %}danger{% else %}info{% endif %}">
+                                                            {{ booking.get_status_display }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-{% if booking.payment_status == 'paid' %}success{% elif booking.payment_status == 'pending' %}warning{% elif booking.payment_status == 'refunded' %}info{% else %}danger{% endif %}">
+                                                            {{ booking.get_payment_status_display }}
+                                                        </span>
+                                                    </td>
+                                                    <td>${{ booking.total_price }}</td>
+                                                    <td>
+                                                        <div class="btn-group">
+                                                            <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                                            {% if booking.status == 'pending' %}
+                                                                <a href="#" class="btn btn-sm btn-outline-danger">Cancel</a>
+                                                            {% endif %}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-plane fa-3x mb-3 text-muted"></i>
+                                    <h5>No Flight Bookings Found</h5>
+                                    <p class="text-muted">You haven't made any flight bookings yet.</p>
+                                    <a href="{% url 'flight:search' %}" class="btn btn-primary">Book a Flight</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="tab-pane fade" id="train" role="tabpanel" aria-labelledby="train-tab">
+                            {% if train_bookings %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Booking Reference</th>
+                                                <th>Train</th>
+                                                <th>Travel Date</th>
+                                                <th>Status</th>
+                                                <th>Payment Status</th>
+                                                <th>Total Price</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for booking in train_bookings %}
+                                                <tr>
+                                                    <td><strong>{{ booking.booking_reference }}</strong></td>
+                                                    <td>{{ booking.train_route }}</td>
+                                                    <td>{{ booking.travel_date|date:"d M Y" }}</td>
+                                                    <td>
+                                                        <span class="badge bg-{% if booking.status == 'confirmed' %}success{% elif booking.status == 'pending' %}warning{% elif booking.status == 'cancelled' %}danger{% else %}info{% endif %}">
+                                                            {{ booking.get_status_display }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-{% if booking.payment_status == 'paid' %}success{% elif booking.payment_status == 'pending' %}warning{% elif booking.payment_status == 'refunded' %}info{% else %}danger{% endif %}">
+                                                            {{ booking.get_payment_status_display }}
+                                                        </span>
+                                                    </td>
+                                                    <td>${{ booking.total_price }}</td>
+                                                    <td>
+                                                        <div class="btn-group">
+                                                            <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                                            {% if booking.status == 'pending' %}
+                                                                <a href="#" class="btn btn-sm btn-outline-danger">Cancel</a>
+                                                            {% endif %}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-train fa-3x mb-3 text-muted"></i>
+                                    <h5>No Train Bookings Found</h5>
+                                    <p class="text-muted">You haven't made any train bookings yet.</p>
+                                    <a href="{% url 'train:search' %}" class="btn btn-primary">Book a Train</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="tab-pane fade" id="hotel" role="tabpanel" aria-labelledby="hotel-tab">
+                            {% if hotel_bookings %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Booking Reference</th>
+                                                <th>Hotel</th>
+                                                <th>Check In - Check Out</th>
+                                                <th>Status</th>
+                                                <th>Payment Status</th>
+                                                <th>Total Price</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for booking in hotel_bookings %}
+                                                <tr>
+                                                    <td><strong>{{ booking.booking_reference }}</strong></td>
+                                                    <td>{{ booking.hotel.name }}</td>
+                                                    <td>{{ booking.check_in_date|date:"d M Y" }} - {{ booking.check_out_date|date:"d M Y" }}</td>
+                                                    <td>
+                                                        <span class="badge bg-{% if booking.status == 'confirmed' %}success{% elif booking.status == 'pending' %}warning{% elif booking.status == 'cancelled' %}danger{% else %}info{% endif %}">
+                                                            {{ booking.get_status_display }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-{% if booking.payment_status == 'paid' %}success{% elif booking.payment_status == 'pending' %}warning{% elif booking.payment_status == 'refunded' %}info{% else %}danger{% endif %}">
+                                                            {{ booking.get_payment_status_display }}
+                                                        </span>
+                                                    </td>
+                                                    <td>${{ booking.total_price }}</td>
+                                                    <td>
+                                                        <div class="btn-group">
+                                                            <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                                            {% if booking.status == 'pending' %}
+                                                                <a href="#" class="btn btn-sm btn-outline-danger">Cancel</a>
+                                                            {% endif %}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-hotel fa-3x mb-3 text-muted"></i>
+                                    <h5>No Hotel Bookings Found</h5>
+                                    <p class="text-muted">You haven't made any hotel bookings yet.</p>
+                                    <a href="{% url 'hotel:search' %}" class="btn btn-primary">Book a Hotel</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

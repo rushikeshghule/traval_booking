@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Flight Search Results{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Ensure text visibility */
+    .result-card h5, .result-card p, .result-card span {
+        color: #333 !important;
+    }
+    
+    .result-card {
+        transition: transform 0.2s ease;
+        margin-bottom: 20px;
+    }
+    
+    .result-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .airline-logo {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Flight Results</h3>
+                    <p class="text-muted">From {{ origin }} to {{ destination }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Filters panel -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Filters</h5>
+                    <!-- Your filters here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            {% for flight in flights %}
+            <div class="card result-card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 text-center">
+                            <img src="https://images.unsplash.com/photo-1608836089946-aa3a9c821f37?w=40&h=40&fit=crop" alt="Airline Logo" class="airline-logo mb-2">
+                            <p class="mb-0">{{ flight.airline }}</p>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <h5 class="mb-1">{{ flight.departure_time }}</h5>
+                            <p class="text-muted mb-0">{{ flight.origin }}</p>
+                        </div>
+                        
+                        <div class="col-md-2 text-center">
+                            <p class="mb-0">{{ flight.duration }}</p>
+                            <div class="flight-line position-relative">
+                                <hr>
+                                <i class="fas fa-plane"></i>
+                            </div>
+                            <p class="mb-0 text-muted">{% if flight.stops > 0 %}{{ flight.stops }} stops{% else %}Nonstop{% endif %}</p>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <h5 class="mb-1">{{ flight.arrival_time }}</h5>
+                            <p class="text-muted mb-0">{{ flight.destination }}</p>
+                        </div>
+                        
+                        <div class="col-md-2 text-end">
+                            <h5 class="text-primary mb-2">${{ flight.price }}</h5>
+                            <a href="{% url 'flight:detail' flight.id %}" class="btn btn-primary">Select</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="card">
+                <div class="card-body text-center">
+                    <p>No flights found. Try different search criteria.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

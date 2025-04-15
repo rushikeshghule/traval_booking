@@ -1,0 +1,292 @@
+{% extends 'base.html' %}
+
+{% block title %}Booking Successful - Travel Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm border-success mb-4">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle fa-5x text-success"></i>
+                    </div>
+                    <h2 class="mb-3">Booking Successful!</h2>
+                    <p class="lead mb-4">Your flight has been booked successfully. Your booking reference is <strong>{{ booking.reference }}</strong></p>
+                    <div class="d-flex justify-content-center">
+                        <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary me-2">
+                            <i class="fas fa-tachometer-alt me-1"></i> Go to Dashboard
+                        </a>
+                        <a href="#" class="btn btn-outline-primary" onclick="window.print()">
+                            <i class="fas fa-print me-1"></i> Print Receipt
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-receipt me-2"></i>Booking Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Booking Information</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Booking Reference</th>
+                                    <td>{{ booking.reference }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Booking Date</th>
+                                    <td>{{ booking.booking_date|date:"d M Y, h:i A" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td>
+                                        <span class="badge bg-success">{{ booking.status }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Payment Status</th>
+                                    <td>
+                                        <span class="badge bg-success">{{ booking.payment_status }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Total Amount</th>
+                                    <td>${{ booking.total_price }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Flight Information</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Airline</th>
+                                    <td>{{ booking.flight.airline.name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Flight Number</th>
+                                    <td>{{ booking.flight.flight_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th>From</th>
+                                    <td>{{ booking.flight.source.city }} ({{ booking.flight.source.code }})</td>
+                                </tr>
+                                <tr>
+                                    <th>To</th>
+                                    <td>{{ booking.flight.destination.city }} ({{ booking.flight.destination.code }})</td>
+                                </tr>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <td>{{ booking.flight.departure_time|date:"d M Y, h:i A" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <h5 class="border-bottom pb-2 mb-3">Passenger Details</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="bg-light">
+                                    <th>Name</th>
+                                    <th>Passport</th>
+                                    <th>Seat</th>
+                                    <th>Class</th>
+                                    <th>Special Requirements</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for passenger in booking.passengers.all %}
+                                <tr>
+                                    <td>{{ passenger.title }} {{ passenger.first_name }} {{ passenger.last_name }}</td>
+                                    <td>{{ passenger.passport_number }}</td>
+                                    <td>{% if passenger.seat %}{{ passenger.seat }}{% else %}Not Assigned Yet{% endif %}</td>
+                                    <td>{{ booking.travel_class|title }}</td>
+                                    <td>
+                                        {% if passenger.special_assistance %}
+                                            {{ passenger.special_assistance_details }}
+                                        {% else %}
+                                            None
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3">Payment Details</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Payment Method</th>
+                                    <td>{{ booking.payment_method|title }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <td>{{ booking.transaction_id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Payment Date</th>
+                                    <td>{{ booking.payment_date|date:"d M Y, h:i A" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3">Price Breakdown</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Base Fare</th>
+                                    <td>${{ booking.base_fare }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Taxes & Fees</th>
+                                    <td>${{ booking.taxes }}</td>
+                                </tr>
+                                {% if booking.add_ons %}
+                                <tr>
+                                    <th>Add-ons</th>
+                                    <td>${{ booking.add_ons_total }}</td>
+                                </tr>
+                                {% endif %}
+                                <tr class="table-primary">
+                                    <th>Total</th>
+                                    <td>${{ booking.total_price }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Important Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-clock fa-2x text-primary"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Check-in</h6>
+                                    <p class="mb-0 small">Online check-in opens 24 hours before departure. Please arrive at the airport at least 2 hours before domestic flights and 3 hours before international flights.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-suitcase fa-2x text-primary"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Baggage</h6>
+                                    <p class="mb-0 small">Your ticket includes 1 check-in baggage (23kg) and 1 cabin baggage (7kg). Additional fees apply for extra or overweight baggage.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-clipboard-list fa-2x text-primary"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Documents</h6>
+                                    <p class="mb-0 small">Please carry valid ID/passport, visa (if required), and a copy of this booking confirmation when you travel.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i> 
+                        <strong>Cancellation Policy:</strong> Cancellations made more than 48 hours before departure are eligible for a partial refund. 
+                        Please refer to our <a href="{% url 'core:terms' %}">Terms and Conditions</a> for complete details.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">What's Next?</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 col-6 mb-4 text-center">
+                            <i class="fas fa-envelope fa-3x mb-3 text-primary"></i>
+                            <h6>Email Confirmation</h6>
+                            <p class="small">Check your email for a detailed confirmation</p>
+                        </div>
+                        <div class="col-md-3 col-6 mb-4 text-center">
+                            <i class="fas fa-check-square fa-3x mb-3 text-primary"></i>
+                            <h6>Online Check-in</h6>
+                            <p class="small">Available 24 hours before departure</p>
+                        </div>
+                        <div class="col-md-3 col-6 mb-4 text-center">
+                            <i class="fas fa-hotel fa-3x mb-3 text-primary"></i>
+                            <h6>Book a Hotel</h6>
+                            <p class="small">Complete your trip with accommodation</p>
+                        </div>
+                        <div class="col-md-3 col-6 mb-4 text-center">
+                            <i class="fas fa-car fa-3x mb-3 text-primary"></i>
+                            <h6>Need a Ride?</h6>
+                            <p class="small">Book airport transfers at great rates</p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center mt-2">
+                        <a href="{% url 'hotel:search' %}" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-hotel me-1"></i> Book Hotel
+                        </a>
+                        <a href="{% url 'core:contact' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-question-circle me-1"></i> Need Help?
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .navbar, .footer, .no-print {
+        display: none !important;
+    }
+    
+    .card {
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+    }
+    
+    .card-header {
+        background-color: #f8f9fa !important;
+        color: #000 !important;
+    }
+    
+    .table {
+        border-color: #ddd !important;
+    }
+    
+    .bg-success, .bg-primary, .text-white {
+        background-color: #f8f9fa !important;
+        color: #000 !important;
+    }
+    
+    a {
+        text-decoration: none !important;
+        color: #000 !important;
+    }
+    
+    .btn {
+        display: none !important;
+    }
+}
+</style>
+{% endblock %}

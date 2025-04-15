@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Booking Confirmed - Travel Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+                    </div>
+                    <h2 class="mb-3">Booking Confirmed!</h2>
+                    <p class="lead mb-4">Your bus ticket has been successfully booked and confirmed.</p>
+                    <div class="d-inline-block p-3 bg-light rounded mb-4">
+                        <h5 class="mb-1">Booking Reference: <span class="text-primary">{{ booking.booking_reference }}</span></h5>
+                        <p class="mb-0 text-muted">Please keep this reference for your records</p>
+                    </div>
+                    <p class="mb-0">A confirmation email has been sent to your registered email address.</p>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Booking Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-4 mb-md-0">
+                            <h6>Bus Information</h6>
+                            <p class="mb-1"><strong>Operator:</strong> {{ booking.schedule.bus.operator.name }}</p>
+                            <p class="mb-1"><strong>Bus Number:</strong> {{ booking.schedule.bus.bus_number }}</p>
+                            <p class="mb-1"><strong>Bus Type:</strong> {{ booking.schedule.bus.get_bus_type_display }}</p>
+                            <p class="mb-1"><strong>From:</strong> {{ booking.schedule.route.source }}</p>
+                            <p class="mb-1"><strong>To:</strong> {{ booking.schedule.route.destination }}</p>
+                            <p class="mb-1"><strong>Departure:</strong> {{ booking.schedule.departure_time|date:"d M Y, h:i A" }}</p>
+                            <p class="mb-0"><strong>Arrival:</strong> {{ booking.schedule.arrival_time|date:"d M Y, h:i A" }}</p>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h6>Ticket Information</h6>
+                            <p class="mb-1"><strong>Passenger Count:</strong> {{ booking.passenger_count }}</p>
+                            <p class="mb-1"><strong>Selected Seats:</strong> 
+                                {% for seat in booking.seats.all %}
+                                    {{ seat.seat_number }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            <p class="mb-1"><strong>Booking Date:</strong> {{ booking.booking_date|date:"d M Y, h:i A" }}</p>
+                            <p class="mb-1"><strong>Status:</strong> <span class="badge bg-success">{{ booking.get_status_display }}</span></p>
+                            <p class="mb-1"><strong>Payment Status:</strong> <span class="badge bg-success">{{ booking.get_payment_status_display }}</span></p>
+                            <p class="mb-0"><strong>Total Amount Paid:</strong> ${{ booking.total_price|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Important Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <h6>What to Bring</h6>
+                            <ul class="mb-0">
+                                <li>A printed or digital copy of your ticket</li>
+                                <li>A valid photo ID (Passport, Driver's License, etc.)</li>
+                                <li>Your booking reference number</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h6>Travel Tips</h6>
+                            <ul class="mb-0">
+                                <li>Arrive at least 15 minutes before departure</li>
+                                <li>Check baggage restrictions beforehand</li>
+                                <li>Keep valuable items with you at all times</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mb-4">
+                <a href="{% url 'accounts:bookings' %}" class="btn btn-primary me-2">View My Bookings</a>
+                <a href="{% url 'home' %}" class="btn btn-outline-primary">Return to Home</a>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Need Help?</h5>
+                    <p class="mb-2">If you have any questions or need assistance, please contact our support team:</p>
+                    <p class="mb-1"><i class="fas fa-phone me-2"></i> +1 234 567 8900</p>
+                    <p class="mb-0"><i class="fas fa-envelope me-2"></i> support@travelbooking.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

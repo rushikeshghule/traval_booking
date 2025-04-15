@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - Travel Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        {% if user.profile_pic %}
+                            <img src="{{ user.profile_pic.url }}" alt="{{ user.get_full_name }}" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto" style="width: 150px; height: 150px;">
+                                <i class="fas fa-user fa-5x text-secondary"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <h4>{{ user.get_full_name }}</h4>
+                    <p class="text-muted">{{ user.email }}</p>
+                    <p class="text-muted">Member since {{ user.date_joined|date:"F Y" }}</p>
+                    <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Profile Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <p class="mb-0 text-muted">Full Name</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0">{{ user.get_full_name }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <p class="mb-0 text-muted">Email</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0">{{ user.email }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <p class="mb-0 text-muted">Phone</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0">{{ user.phone_number|default:"Not provided" }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="mb-0 text-muted">Address</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p class="mb-0">{{ user.address|default:"Not provided"|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Booking Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="mb-1 text-muted">Bus Bookings</p>
+                                    <h5 class="mb-0">{{ user.busbooking_bookings.count }}</h5>
+                                </div>
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-bus fa-lg text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="mb-1 text-muted">Flight Bookings</p>
+                                    <h5 class="mb-0">{{ user.flightbooking_bookings.count }}</h5>
+                                </div>
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-plane fa-lg text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="mb-1 text-muted">Train Bookings</p>
+                                    <h5 class="mb-0">{{ user.trainbooking_bookings.count }}</h5>
+                                </div>
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-train fa-lg text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="mb-1 text-muted">Hotel Bookings</p>
+                                    <h5 class="mb-0">{{ user.hotelbooking_bookings.count }}</h5>
+                                </div>
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-hotel fa-lg text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

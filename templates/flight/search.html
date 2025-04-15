@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Flight Search - Travel Booking System{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Ensure text visibility */
+    .booking-form label, .booking-form h3, .booking-form p {
+        color: #333 !important;
+        font-weight: 500;
+    }
+    
+    /* 
+     * Flight header background image
+     * Displays a high-quality airplane image as the header background
+     * with proper sizing and positioning
+     */
+    .booking-header {
+        background: url('https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=1200&h=300&fit=crop') center/cover;
+        padding: 60px 0;
+        border-radius: 4px;
+        margin-bottom: 30px;
+        position: relative;
+    }
+    
+    .booking-header::before {
+        content: '';
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+        background: rgba(0,0,0,0.4);
+        border-radius: 4px;
+    }
+    
+    .booking-header h2 {
+        color: white !important;
+        position: relative;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="booking-header text-center">
+        <h2>Find the Perfect Flight</h2>
+    </div>
+    
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0" style="color:white"><i class="fas fa-plane me-2" style="color:white"></i>Find Flights</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'flight:search' %}">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="trip_type" id="one_way" value="one_way" checked>
+                                <label class="btn btn-outline-primary" for="one_way">One Way</label>
+                                
+                                <input type="radio" class="btn-check" name="trip_type" id="round_trip" value="round_trip">
+                                <label class="btn btn-outline-primary" for="round_trip">Round Trip</label>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.source|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.destination|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                {{ form.departure_date|as_crispy_field }}
+                            </div>
+                            <div class="col-md-3 mb-3" id="return-date-container">
+                                {{ form.return_date|as_crispy_field }}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                {{ form.passengers|as_crispy_field }}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                {{ form.travel_class|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Search Flights</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Why Book Flights with Us?</h5>
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-4">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-globe fa-2x" style="color: var(--primary-color);"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Global Coverage</h6>
+                                    <p class="text-muted">Access flights to over 500 destinations worldwide with the best airlines.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-money-bill-wave fa-2x" style="color: var(--primary-color);"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>Best Price Guarantee</h6>
+                                    <p class="text-muted">Find a lower price? We'll refund the difference plus 10%.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-headset fa-2x" style="color: var(--primary-color);"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>24/7 Support</h6>
+                                    <p class="text-muted">Our travel experts are available round the clock to assist you.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-tag fa-2x" style="color: var(--primary-color);"></i>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6>No Hidden Fees</h6>
+                                    <p class="text-muted">Transparent pricing with no surprise charges at checkout.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Flight Deals</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <img src="https://source.unsplash.com/600x300/?new-york" class="card-img-top" alt="New York">
+                                <div class="card-body">
+                                    <h5 class="card-title">New York Weekend</h5>
+                                    <p class="card-text">Discover the Big Apple with our exclusive weekend package.</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-primary fw-bold">From $299</span>
+                                        <a href="#" class="btn btn-sm btn-outline-primary">View Deal</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <img src="https://source.unsplash.com/600x300/?paris" class="card-img-top" alt="Paris">
+                                <div class="card-body">
+                                    <h5 class="card-title">Romantic Paris</h5>
+                                    <p class="card-text">Experience the city of love with our special couples package.</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-primary fw-bold">From $449</span>
+                                        <a href="#" class="btn btn-sm btn-outline-primary">View Deal</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4 mb-md-0">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <img src="https://source.unsplash.com/600x300/?tokyo" class="card-img-top" alt="Tokyo">
+                                <div class="card-body">
+                                    <h5 class="card-title">Tokyo Adventure</h5>
+                                    <p class="card-text">Explore the vibrant culture and cuisine of Japan's capital.</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-primary fw-bold">From $799</span>
+                                        <a href="#" class="btn btn-sm btn-outline-primary">View Deal</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <img src="https://source.unsplash.com/600x300/?bali" class="card-img-top" alt="Bali">
+                                <div class="card-body">
+                                    <h5 class="card-title">Bali Retreat</h5>
+                                    <p class="card-text">Relax and unwind in the tropical paradise of Bali.</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-primary fw-bold">From $649</span>
+                                        <a href="#" class="btn btn-sm btn-outline-primary">View Deal</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Popular Destinations</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>London, UK</span>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Search</a>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Dubai, UAE</span>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Search</a>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Singapore</span>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Search</a>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Sydney, Australia</span>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Search</a>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Bangkok, Thailand</span>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Search</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Travel Tips</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6><i class="fas fa-info-circle me-2 text-primary"></i>Booking Early</h6>
+                        <p class="text-muted small mb-0">Book at least 6 weeks in advance to get the best deals.</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6><i class="fas fa-info-circle me-2 text-primary"></i>Flexible Dates</h6>
+                        <p class="text-muted small mb-0">Try flying on weekdays for lower fares.</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6><i class="fas fa-info-circle me-2 text-primary"></i>Baggage Allowance</h6>
+                        <p class="text-muted small mb-0">Check airline baggage policies before booking.</p>
+                    </div>
+                    <div>
+                        <h6><i class="fas fa-info-circle me-2 text-primary"></i>Airport Transfers</h6>
+                        <p class="text-muted small mb-0">Book airport transfers in advance to save time and money.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Need Help?</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">Contact our support team:</p>
+                    <p class="mb-1"><i class="fas fa-phone me-2"></i> +1 234 567 8900</p>
+                    <p class="mb-1"><i class="fas fa-envelope me-2"></i> support@travelbooking.com</p>
+                    <hr>
+                    <p class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i> 
+                        Our flight experts are available 24/7 to help with your booking.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const oneWayRadio = document.getElementById('one_way');
+        const roundTripRadio = document.getElementById('round_trip');
+        const returnDateContainer = document.getElementById('return-date-container');
+        const returnDateInput = document.querySelector('input[name="return_date"]');
+        
+        // Function to toggle return date field
+        function toggleReturnDate() {
+            if (oneWayRadio.checked) {
+                returnDateContainer.style.display = 'none';
+                returnDateInput.value = '';
+                returnDateInput.required = false;
+            } else {
+                returnDateContainer.style.display = 'block';
+                returnDateInput.required = true;
+            }
+        }
+        
+        // Set initial state
+        toggleReturnDate();
+        
+        // Add event listeners
+        oneWayRadio.addEventListener('change', toggleReturnDate);
+        roundTripRadio.addEventListener('change', toggleReturnDate);
+    });
+</script>
+{% endblock %}
+{% endblock %}

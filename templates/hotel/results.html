@@ -1,0 +1,447 @@
+{% extends 'base.html' %}
+
+{% block title %}Hotel Search Results - Travel Booking System{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+        min-height: 100vh;
+    }
+    
+    .search-summary {
+        background: linear-gradient(135deg, #0062cc, #0096ff);
+        border-radius: 8px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+    
+    .hotel-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: none;
+        overflow: hidden;
+    }
+    
+    .hotel-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .hotel-img {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+        border-radius: 6px;
+    }
+    
+    .amenity-badge {
+        background-color: rgba(0, 123, 255, 0.1);
+        color: #0062cc;
+        font-size: 0.8rem;
+        border-radius: 4px;
+        padding: 5px 10px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        display: inline-block;
+    }
+    
+    .price-card {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+    }
+    
+    .filter-card {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 20px;
+    }
+    
+    .filter-header {
+        background: linear-gradient(135deg, #0062cc, #0096ff);
+        color: white;
+        padding: 15px;
+    }
+    
+    .review-badge {
+        font-weight: bold;
+        padding: 8px 12px;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card search-summary text-white">
+                <div class="card-body py-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <p class="mb-1 text-white-50">Destination</p>
+                            <h4 class="mb-0">{{ destination }}</h4>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="mb-1 text-white-50">Check-in</p>
+                            <h4 class="mb-0">{{ check_in|date:"d M Y" }}</h4>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="mb-1 text-white-50">Check-out</p>
+                            <h4 class="mb-0">{{ check_out|date:"d M Y" }}</h4>
+                        </div>
+                        <div class="col-md-2">
+                            <p class="mb-1 text-white-50">Guests/Rooms</p>
+                            <h4 class="mb-0">{{ guests }} / {{ rooms }}</h4>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'hotel:search' %}" class="btn btn-light btn-sm">
+                            <i class="fas fa-search me-1"></i> Modify Search
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card filter-card">
+                <div class="filter-header">
+                    <h5 class="mb-0">Filter Results</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-2">Price Range</h6>
+                    <input type="range" class="form-range" min="0" max="1000" step="50" id="priceRange" value="1000">
+                    <div class="d-flex justify-content-between">
+                        <span>$0</span>
+                        <span id="priceValue">$1000</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="mb-2">Star Rating</h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-star" type="checkbox" value="5" id="star5" checked>
+                        <label class="form-check-label" for="star5">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            5 Stars
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-star" type="checkbox" value="4" id="star4" checked>
+                        <label class="form-check-label" for="star4">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            4 Stars
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-star" type="checkbox" value="3" id="star3" checked>
+                        <label class="form-check-label" for="star3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            3 Stars
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-star" type="checkbox" value="2" id="star2" checked>
+                        <label class="form-check-label" for="star2">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            2 Stars
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input filter-star" type="checkbox" value="1" id="star1" checked>
+                        <label class="form-check-label" for="star1">
+                            <i class="fas fa-star text-warning"></i>
+                            1 Star
+                        </label>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="mb-2">Amenities</h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-amenity" type="checkbox" value="pool" id="pool" checked>
+                        <label class="form-check-label" for="pool">
+                            <i class="fas fa-swimming-pool me-1"></i> Swimming Pool
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-amenity" type="checkbox" value="wifi" id="wifi" checked>
+                        <label class="form-check-label" for="wifi">
+                            <i class="fas fa-wifi me-1"></i> Free WiFi
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-amenity" type="checkbox" value="parking" id="parking" checked>
+                        <label class="form-check-label" for="parking">
+                            <i class="fas fa-parking me-1"></i> Free Parking
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-amenity" type="checkbox" value="breakfast" id="breakfast" checked>
+                        <label class="form-check-label" for="breakfast">
+                            <i class="fas fa-coffee me-1"></i> Breakfast Included
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-amenity" type="checkbox" value="spa" id="spa" checked>
+                        <label class="form-check-label" for="spa">
+                            <i class="fas fa-spa me-1"></i> Spa
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-amenity" type="checkbox" value="gym" id="gym" checked>
+                        <label class="form-check-label" for="gym">
+                            <i class="fas fa-dumbbell me-1"></i> Fitness Center
+                        </label>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="mb-2">Guest Rating</h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-rating" type="checkbox" value="excellent" id="excellent" checked>
+                        <label class="form-check-label" for="excellent">
+                            Excellent (8.5+)
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-rating" type="checkbox" value="very_good" id="very_good" checked>
+                        <label class="form-check-label" for="very_good">
+                            Very Good (8.0-8.4)
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-rating" type="checkbox" value="good" id="good" checked>
+                        <label class="form-check-label" for="good">
+                            Good (7.0-7.9)
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-rating" type="checkbox" value="fair" id="fair" checked>
+                        <label class="form-check-label" for="fair">
+                            Fair (0-6.9)
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Hotels in {{ destination }} ({{ hotels|length }})</h5>
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Sort by
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+                        <li><a class="dropdown-item" href="#" data-sort="price-asc">Price: Low to High</a></li>
+                        <li><a class="dropdown-item" href="#" data-sort="price-desc">Price: High to Low</a></li>
+                        <li><a class="dropdown-item" href="#" data-sort="rating-desc">Guest Rating</a></li>
+                        <li><a class="dropdown-item" href="#" data-sort="stars-desc">Star Rating</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            {% if hotels %}
+                {% for hotel in hotels %}
+                <div class="card mb-4">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300" class="img-fluid rounded-start" alt="{{ hotel.name }}">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title mb-1">{{ hotel.name }}</h5>
+                                    <div>
+                                        {% for i in "12345"|make_list %}
+                                            {% if forloop.counter <= hotel.star_rating %}
+                                                <i class="fas fa-star text-warning"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-warning"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <p class="text-muted mb-2"><i class="fas fa-map-marker-alt me-1"></i> {{ hotel.address }}</p>
+                                <div class="mb-2">
+                                    {% if 'pool' in hotel.amenities %}
+                                        <span class="amenity-badge"><i class="fas fa-swimming-pool me-1"></i> Pool</span>
+                                    {% endif %}
+                                    {% if 'wifi' in hotel.amenities %}
+                                        <span class="amenity-badge"><i class="fas fa-wifi me-1"></i> WiFi</span>
+                                    {% endif %}
+                                    {% if 'parking' in hotel.amenities %}
+                                        <span class="amenity-badge"><i class="fas fa-parking me-1"></i> Parking</span>
+                                    {% endif %}
+                                    {% if 'breakfast' in hotel.amenities %}
+                                        <span class="amenity-badge"><i class="fas fa-coffee me-1"></i> Breakfast</span>
+                                    {% endif %}
+                                    {% if 'spa' in hotel.amenities %}
+                                        <span class="amenity-badge"><i class="fas fa-spa me-1"></i> Spa</span>
+                                    {% endif %}
+                                    {% if 'gym' in hotel.amenities %}
+                                        <span class="amenity-badge"><i class="fas fa-dumbbell me-1"></i> Gym</span>
+                                    {% endif %}
+                                </div>
+                                <p class="card-text">{{ hotel.description|truncatechars:150 }}</p>
+                                <div class="d-flex align-items-center mt-2">
+                                    <span class="review-badge {% if hotel.guest_rating >= 8.5 %}bg-success{% elif hotel.guest_rating >= 8.0 %}bg-primary{% elif hotel.guest_rating >= 7.0 %}bg-info{% else %}bg-secondary{% endif %}">
+                                        {{ hotel.guest_rating }}
+                                    </span>
+                                    <span class="ms-2">
+                                        {% if hotel.guest_rating >= 8.5 %}
+                                            Excellent
+                                        {% elif hotel.guest_rating >= 8.0 %}
+                                            Very Good
+                                        {% elif hotel.guest_rating >= 7.0 %}
+                                            Good
+                                        {% else %}
+                                            Fair
+                                        {% endif %}
+                                    </span>
+                                    <span class="ms-2 text-muted">({{ hotel.review_count }} reviews)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="card shadow text-center p-5">
+                    <div class="py-5">
+                        <img src="https://source.unsplash.com/500x300/?hotel,empty" alt="No hotels found" class="img-fluid mb-4 rounded" style="max-width: 300px;">
+                        <h4>No Hotels Found</h4>
+                        <p class="text-muted">We couldn't find any hotels matching your search criteria.</p>
+                        <a href="{% url 'hotel:search' %}" class="btn btn-primary mt-2">Modify Search</a>
+                    </div>
+                </div>
+            {% endif %}
+            
+            {% if hotels %}
+                <div class="d-flex justify-content-center mt-4">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Price range slider
+        const priceRange = document.getElementById('priceRange');
+        const priceValue = document.getElementById('priceValue');
+        
+        priceRange.addEventListener('input', function() {
+            priceValue.textContent = '$' + this.value;
+            filterHotels();
+        });
+        
+        // Filter hotels
+        const filterHotels = () => {
+            const selectedStars = Array.from(document.querySelectorAll('.filter-star:checked')).map(el => parseInt(el.value));
+            const selectedAmenities = Array.from(document.querySelectorAll('.filter-amenity:checked')).map(el => el.value);
+            const selectedRatings = Array.from(document.querySelectorAll('.filter-rating:checked')).map(el => el.value);
+            const maxPrice = parseInt(priceRange.value);
+            
+            document.querySelectorAll('.hotel-card').forEach(card => {
+                const price = parseFloat(card.dataset.price);
+                const stars = parseInt(card.dataset.stars);
+                const rating = parseFloat(card.dataset.rating);
+                const amenities = card.dataset.amenities ? card.dataset.amenities.split(' ') : [];
+                
+                // Check star rating
+                const starMatch = selectedStars.includes(stars);
+                
+                // Check price
+                const priceMatch = price <= maxPrice;
+                
+                // Check amenities (at least one selected amenity must be present)
+                const amenityMatch = selectedAmenities.length === 0 || selectedAmenities.some(amenity => amenities.includes(amenity));
+                
+                // Check guest rating
+                let ratingMatch = false;
+                if (selectedRatings.includes('excellent') && rating >= 8.5) ratingMatch = true;
+                else if (selectedRatings.includes('very_good') && rating >= 8.0 && rating < 8.5) ratingMatch = true;
+                else if (selectedRatings.includes('good') && rating >= 7.0 && rating < 8.0) ratingMatch = true;
+                else if (selectedRatings.includes('fair') && rating < 7.0) ratingMatch = true;
+                
+                // Show/hide card
+                if (starMatch && priceMatch && amenityMatch && ratingMatch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        };
+        
+        // Add event listeners to all filters
+        document.querySelectorAll('.filter-star, .filter-amenity, .filter-rating').forEach(filter => {
+            filter.addEventListener('change', filterHotels);
+        });
+        
+        // Sorting
+        document.querySelectorAll('[data-sort]').forEach(el => {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sortType = this.getAttribute('data-sort');
+                sortHotels(sortType);
+            });
+        });
+        
+        const sortHotels = (sortType) => {
+            const hotelCards = Array.from(document.querySelectorAll('.hotel-card'));
+            const container = hotelCards[0].parentNode;
+            
+            hotelCards.sort((a, b) => {
+                if (sortType === 'price-asc') {
+                    return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                } else if (sortType === 'price-desc') {
+                    return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                } else if (sortType === 'rating-desc') {
+                    return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating);
+                } else if (sortType === 'stars-desc') {
+                    return parseInt(b.dataset.stars) - parseInt(a.dataset.stars);
+                }
+                return 0;
+            });
+            
+            hotelCards.forEach(card => container.appendChild(card));
+        };
+    });
+</script>
+{% endblock %}
+{% endblock %}

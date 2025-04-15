@@ -1,0 +1,381 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Train Booking{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Ensure text visibility */
+    .booking-form label, .booking-form h3, .booking-form p {
+        color: #333 !important;
+        font-weight: 500;
+    }
+    
+    .booking-header {
+        background: url('https://images.unsplash.com/photo-1541427468627-a89a96e5ca1d?w=1200&h=300&fit=crop') center/cover;
+        padding: 60px 0;
+        border-radius: 4px;
+        margin-bottom: 30px;
+        position: relative;
+    }
+    
+    .booking-header::before {
+        content: '';
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+        background: rgba(0,0,0,0.4);
+        border-radius: 4px;
+    }
+    
+    .booking-header h2 {
+        color: white !important;
+        position: relative;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .train-search-container {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('https://source.unsplash.com/1600x900/?train,railway') no-repeat center center;
+        background-size: cover;
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+        color: white;
+        padding: 50px 0;
+    }
+    
+    .search-form-card {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        border: none;
+    }
+    
+    .train-type-selector {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 25px;
+    }
+    
+    .train-type-selector .btn {
+        border-radius: 20px;
+        padding: 8px 20px;
+        margin: 0 5px;
+        font-weight: 500;
+    }
+    
+    .search-btn {
+        background: linear-gradient(135deg, #0062cc, #0096ff);
+        border: none;
+        padding: 12px 24px;
+        font-weight: 600;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .route-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        border: none;
+        transition: transform 0.3s;
+        margin-bottom: 20px;
+    }
+    
+    .route-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .route-img {
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    .route-banner {
+        background: linear-gradient(135deg, #0062cc, #0096ff);
+        color: white;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .route-cities {
+        display: flex;
+        align-items: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    
+    .route-arrow {
+        margin: 0 15px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .feature-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #0062cc, #0096ff);
+        color: white;
+        font-size: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="booking-header text-center">
+        <h2>Find the Perfect Train Journey</h2>
+    </div>
+    
+    <div class="card">
+        <div class="card-body booking-form">
+            <form method="post" action="{% url 'train:search' %}">
+                {% csrf_token %}
+                <input type="hidden" name="journey_type" id="journey_type" value="one_way">
+                
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-3">
+                        <label for="source" class="form-label">From</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                            <input type="text" name="source" id="source" class="form-control" placeholder="City or Station" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="destination" class="form-label">To</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                            <input type="text" name="destination" id="destination" class="form-control" placeholder="City or Station" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-3">
+                        <label for="departure_date" class="form-label">Departure Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                            <input type="date" name="departure_date" id="departure_date" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3" id="returnDateContainer" style="display: none;">
+                        <label for="return_date" class="form-label">Return Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                            <input type="date" name="return_date" id="return_date" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <label for="passengers" class="form-label">Passengers</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-users"></i></span>
+                            <select name="passengers" id="passengers" class="form-select">
+                                <option value="1">1 Passenger</option>
+                                <option value="2" selected>2 Passengers</option>
+                                <option value="3">3 Passengers</option>
+                                <option value="4">4 Passengers</option>
+                                <option value="5">5 Passengers</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="train_class" class="form-label">Class</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-chair"></i></span>
+                            <select name="train_class" id="train_class" class="form-select">
+                                <option value="economy" selected>Economy</option>
+                                <option value="business">Business</option>
+                                <option value="first">First Class</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary search-btn">
+                        <i class="fas fa-search me-2"></i> Search Trains
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Popular Routes Section -->
+    <h3 class="mt-5 mb-4">Popular Train Routes</h3>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="route-card">
+                <div class="route-banner">
+                    <div class="route-cities">
+                        <span>New York</span>
+                        <span class="route-arrow"><i class="fas fa-long-arrow-alt-right"></i></span>
+                        <span>Boston City</span>
+                    </div>
+                    <span class="badge bg-light text-primary">From $45</span>
+                </div>
+                <img src="https://images.pexels.com/photos/2031758/pexels-photo-2031758.jpeg?w=600&h=300&fit=crop&auto=compress&cs=tinysrgb" alt="New York to Boston" class="route-img">
+                <div class="card-body">
+                    <p class="card-text">
+                        <i class="fas fa-clock text-primary me-2"></i> Travel time: 4h 20m<br>
+                        <i class="fas fa-train text-primary me-2"></i> Daily departures: 12
+                    </p>
+                    <a href="#" class="btn btn-outline-primary btn-sm d-block">View Schedule</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="route-card">
+                <div class="route-banner">
+                    <div class="route-cities">
+                        <span>Los Angeles</span>
+                        <span class="route-arrow"><i class="fas fa-long-arrow-alt-right"></i></span>
+                        <span>San Francisco</span>
+                    </div>
+                    <span class="badge bg-light text-primary">From $79</span>
+                </div>
+                <img src="https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=600&h=300&fit=crop&q=80" alt="LA to San Francisco" class="route-img">
+                <div class="card-body">
+                    <p class="card-text">
+                        <i class="fas fa-clock text-primary me-2"></i> Travel time: 7h 30m<br>
+                        <i class="fas fa-train text-primary me-2"></i> Daily departures: 8
+                    </p>
+                    <a href="#" class="btn btn-outline-primary btn-sm d-block">View Schedule</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="route-card">
+                <div class="route-banner">
+                    <div class="route-cities">
+                        <span>Chicago</span>
+                        <span class="route-arrow"><i class="fas fa-long-arrow-alt-right"></i></span>
+                        <span>Washington DC</span>
+                    </div>
+                    <span class="badge bg-light text-primary">From $89</span>
+                </div>
+                <img src="https://images.unsplash.com/photo-1495313196544-7d1adf4e628f?w=600&h=300&fit=crop&q=80" alt="Chicago to Washington" class="route-img">
+                <div class="card-body">
+                    <p class="card-text">
+                        <i class="fas fa-clock text-primary me-2"></i> Travel time: 16h 55m<br>
+                        <i class="fas fa-train text-primary me-2"></i> Daily departures: 5
+                    </p>
+                    <a href="#" class="btn btn-outline-primary btn-sm d-block">View Schedule</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container py-5 bg-light">
+    <div class="row text-center mb-4">
+        <div class="col-12">
+            <h2>Why Book Train Tickets With Us?</h2>
+            <p class="lead text-muted">We make your train travel experience smooth and hassle-free</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 text-center mb-4">
+            <div class="mx-auto feature-icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <h5>Fast Booking</h5>
+            <p class="text-muted">Book your tickets in less than 2 minutes with our streamlined process</p>
+        </div>
+        <div class="col-md-3 text-center mb-4">
+            <div class="mx-auto feature-icon">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <h5>No Hidden Fees</h5>
+            <p class="text-muted">Transparent pricing with no hidden charges or booking fees</p>
+        </div>
+        <div class="col-md-3 text-center mb-4">
+            <div class="mx-auto feature-icon">
+                <i class="fas fa-ticket-alt"></i>
+            </div>
+            <h5>E-Tickets</h5>
+            <p class="text-muted">Get e-tickets instantly on your mobile or print them at home</p>
+        </div>
+        <div class="col-md-3 text-center mb-4">
+            <div class="mx-auto feature-icon">
+                <i class="fas fa-headset"></i>
+            </div>
+            <h5>24/7 Support</h5>
+            <p class="text-muted">Our customer support team is available anytime to help you</p>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set default dates (departure today, return tomorrow)
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        
+        // Format dates as YYYY-MM-DD
+        const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+        
+        document.getElementById('departure_date').value = formatDate(today);
+        document.getElementById('return_date').value = formatDate(tomorrow);
+        
+        // One Way / Round Trip toggle
+        const oneWayBtn = document.getElementById('oneWayBtn');
+        const roundTripBtn = document.getElementById('roundTripBtn');
+        const returnDateContainer = document.getElementById('returnDateContainer');
+        const journeyTypeInput = document.getElementById('journey_type');
+        
+        oneWayBtn.addEventListener('click', function() {
+            oneWayBtn.classList.add('btn-primary');
+            oneWayBtn.classList.remove('btn-outline-primary');
+            roundTripBtn.classList.remove('btn-primary');
+            roundTripBtn.classList.add('btn-outline-primary');
+            returnDateContainer.style.display = 'none';
+            journeyTypeInput.value = 'one_way';
+        });
+        
+        roundTripBtn.addEventListener('click', function() {
+            roundTripBtn.classList.add('btn-primary');
+            roundTripBtn.classList.remove('btn-outline-primary');
+            oneWayBtn.classList.remove('btn-primary');
+            oneWayBtn.classList.add('btn-outline-primary');
+            returnDateContainer.style.display = 'block';
+            journeyTypeInput.value = 'round_trip';
+        });
+        
+        // Ensure return date is after departure date
+        document.getElementById('departure_date').addEventListener('change', function() {
+            const departureDate = new Date(this.value);
+            const returnDate = new Date(document.getElementById('return_date').value);
+            
+            if (returnDate <= departureDate) {
+                const newReturnDate = new Date(departureDate);
+                newReturnDate.setDate(departureDate.getDate() + 1);
+                document.getElementById('return_date').value = formatDate(newReturnDate);
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

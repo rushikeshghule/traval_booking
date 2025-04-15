@@ -1,0 +1,411 @@
+{% extends 'base.html' %}
+
+{% block title %}Bus Details - Travel Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'bus:search' %}">Bus Search</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Bus Details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-bus me-2"></i>Bus Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-4 mb-md-0">
+                            {% if schedule.bus.operator.logo %}
+                                <img src="{{ schedule.bus.operator.logo.url }}" alt="{{ schedule.bus.operator.name }}" class="img-fluid mb-3" style="max-height: 60px;">
+                            {% else %}
+                                <i class="fas fa-bus fa-3x mb-3 text-primary"></i>
+                            {% endif %}
+                            <h5 class="mb-1">{{ schedule.bus.operator.name }}</h5>
+                            <p class="mb-0">{{ schedule.bus.get_bus_type_display }} Bus</p>
+                            <p class="mb-0 text-muted">{{ schedule.bus.bus_number }}</p>
+                        </div>
+                        
+                        <div class="col-md-3 mb-4 mb-md-0">
+                            <div class="text-center border-end h-100">
+                                <h5 class="mb-1">{{ schedule.departure_time|date:"h:i A" }}</h5>
+                                <p class="mb-3 text-muted">{{ schedule.departure_time|date:"D, d M Y" }}</p>
+                                <h6>{{ schedule.route.source }}</h6>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3 mb-4 mb-md-0">
+                            <div class="text-center border-end h-100">
+                                <h5 class="mb-1">{{ schedule.arrival_time|date:"h:i A" }}</h5>
+                                <p class="mb-3 text-muted">{{ schedule.arrival_time|date:"D, d M Y" }}</p>
+                                <h6>{{ schedule.route.destination }}</h6>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3 text-center">
+                            <h5 class="mb-1">Journey Details</h5>
+                            <p class="mb-1"><strong>Duration:</strong> {{ schedule.route.duration }}</p>
+                            <p class="mb-1"><strong>Distance:</strong> {{ schedule.route.distance }} km</p>
+                            <p class="mb-0"><strong>Available Seats:</strong> {{ schedule.available_seats }}</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5>Amenities</h5>
+                            <ul class="list-unstyled">
+                                {% if schedule.bus.amenities %}
+                                    {% for amenity in schedule.bus.amenities.split(',') %}
+                                        <li><i class="fas fa-check-circle text-success me-2"></i> {{ amenity.strip }}</li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li><i class="fas fa-check-circle text-success me-2"></i> Air Conditioning</li>
+                                    <li><i class="fas fa-check-circle text-success me-2"></i> Comfortable Seats</li>
+                                    <li><i class="fas fa-check-circle text-success me-2"></i> WiFi</li>
+                                    <li><i class="fas fa-check-circle text-success me-2"></i> Power Outlets</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <h5>Policy</h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-info-circle text-primary me-2"></i> Arrive 15 minutes before departure</li>
+                                <li><i class="fas fa-info-circle text-primary me-2"></i> Luggage limit: 15kg per passenger</li>
+                                <li><i class="fas fa-info-circle text-primary me-2"></i> No smoking allowed</li>
+                                <li><i class="fas fa-info-circle text-primary me-2"></i> Pets are not allowed</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <h5>Pricing</h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-tag text-primary me-2"></i> Base Fare: ${{ schedule.fare }} per seat</li>
+                                <li><i class="fas fa-tag text-primary me-2"></i> Service Fee: $2.00</li>
+                                <li><i class="fas fa-tag text-primary me-2"></i> Booking Fee: Free</li>
+                                <li><i class="fas fa-tag text-primary me-2"></i> GST: Included</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Seat Selection</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-4 text-center">
+                                <div class="bus-layout">
+                                    <div class="bus-front p-2 mb-3 bg-light text-center rounded">
+                                        <small>FRONT</small>
+                                    </div>
+                                    
+                                    <div class="row g-2 mb-2">
+                                        {% for seat in available_seats %}
+                                            <div class="col-2">
+                                                <div class="seat available" data-seat-id="{{ seat.id }}" data-seat-number="{{ seat.seat_number }}">
+                                                    {{ seat.seat_number }}
+                                                </div>
+                                            </div>
+                                            {% if forloop.counter|divisibleby:6 %}
+                                                </div><div class="row g-2 mb-2">
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                
+                                <div class="seat-legend d-flex justify-content-center mt-3">
+                                    <div class="d-flex align-items-center me-4">
+                                        <div class="seat-mini available me-2"></div>
+                                        <small>Available</small>
+                                    </div>
+                                    <div class="d-flex align-items-center me-4">
+                                        <div class="seat-mini selected me-2"></div>
+                                        <small>Selected</small>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="seat-mini booked me-2"></div>
+                                        <small>Booked</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Booking Summary</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-1"><strong>Bus Type:</strong> {{ schedule.bus.get_bus_type_display }}</p>
+                                    <p class="mb-1"><strong>From:</strong> {{ schedule.route.source }}</p>
+                                    <p class="mb-1"><strong>To:</strong> {{ schedule.route.destination }}</p>
+                                    <p class="mb-1"><strong>Departure:</strong> {{ schedule.departure_time|date:"d M Y, h:i A" }}</p>
+                                    <p class="mb-3"><strong>Arrival:</strong> {{ schedule.arrival_time|date:"d M Y, h:i A" }}</p>
+                                    
+                                    <div id="selected-seats-container">
+                                        <p class="mb-1"><strong>Selected Seats:</strong> <span id="selected-seats">None</span></p>
+                                        <p class="mb-0"><strong>Total Amount:</strong> $<span id="total-amount">0.00</span></p>
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <a href="{% url 'bus:booking' pk=schedule.pk %}" class="btn btn-primary" id="proceed-button" disabled>
+                                            Proceed to Book
+                                        </a>
+                                        <a href="{% url 'bus:results' %}" class="btn btn-outline-secondary">
+                                            Back to Results
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Reviews and Ratings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <h2 class="mb-0">4.5 <small class="text-muted">/5</small></h2>
+                            <div class="mb-2">
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star text-warning"></i>
+                                <i class="fas fa-star-half-alt text-warning"></i>
+                            </div>
+                            <p class="text-muted">Based on 128 reviews</p>
+                        </div>
+                        
+                        <div class="col-md-8">
+                            <div class="review-bars">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-2" style="width: 60px;">5 stars</div>
+                                    <div class="progress flex-grow-1" style="height: 10px;">
+                                        <div class="progress-bar bg-success" style="width: 75%"></div>
+                                    </div>
+                                    <div class="ms-2">75%</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-2" style="width: 60px;">4 stars</div>
+                                    <div class="progress flex-grow-1" style="height: 10px;">
+                                        <div class="progress-bar bg-success" style="width: 15%"></div>
+                                    </div>
+                                    <div class="ms-2">15%</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-2" style="width: 60px;">3 stars</div>
+                                    <div class="progress flex-grow-1" style="height: 10px;">
+                                        <div class="progress-bar bg-warning" style="width: 6%"></div>
+                                    </div>
+                                    <div class="ms-2">6%</div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-2" style="width: 60px;">2 stars</div>
+                                    <div class="progress flex-grow-1" style="height: 10px;">
+                                        <div class="progress-bar bg-danger" style="width: 3%"></div>
+                                    </div>
+                                    <div class="ms-2">3%</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="me-2" style="width: 60px;">1 star</div>
+                                    <div class="progress flex-grow-1" style="height: 10px;">
+                                        <div class="progress-bar bg-danger" style="width: 1%"></div>
+                                    </div>
+                                    <div class="ms-2">1%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="review">
+                                <div class="d-flex">
+                                    <img src="https://via.placeholder.com/40" class="rounded-circle me-3" alt="User">
+                                    <div>
+                                        <h6 class="mb-0">John Doe</h6>
+                                        <div class="mb-1">
+                                            <i class="fas fa-star text-warning"></i>
+                                            <i class="fas fa-star text-warning"></i>
+                                            <i class="fas fa-star text-warning"></i>
+                                            <i class="fas fa-star text-warning"></i>
+                                            <i class="fas fa-star text-warning"></i>
+                                        </div>
+                                        <small class="text-muted">Traveled on 15 Jan 2025</small>
+                                    </div>
+                                </div>
+                                <p class="mt-2 mb-0">The bus was very comfortable and punctual. The driver was professional and the journey was smooth. Would definitely recommend!</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="review">
+                                <div class="d-flex">
+                                    <img src="https://via.placeholder.com/40" class="rounded-circle me-3" alt="User">
+                                    <div>
+                                        <h6 class="mb-0">Jane Smith</h6>
+                                        <div class="mb-1">
+                                            <i class="fas fa-star text-warning"></i>
+                                            <i class="fas fa-star text-warning"></i>
+                                            <i class="fas fa-star text-warning"></i>
+                                            <i class="fas fa-star text-warning"></i>
+                                            <i class="far fa-star text-warning"></i>
+                                        </div>
+                                        <small class="text-muted">Traveled on 10 Jan 2025</small>
+                                    </div>
+                                </div>
+                                <p class="mt-2 mb-0">Great service and comfortable seats. The only drawback was the delay in departure, but we still arrived on time. The WiFi worked well throughout the journey.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="#" class="btn btn-outline-primary">View All Reviews</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    .bus-layout {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .seat {
+        background-color: #ddd;
+        border-radius: 5px;
+        padding: 10px 5px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .seat.available {
+        background-color: #9fe29f;
+        color: #333;
+    }
+    
+    .seat.selected {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .seat.booked {
+        background-color: #dc3545;
+        color: white;
+        cursor: not-allowed;
+    }
+    
+    .seat-mini {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+    }
+    
+    .seat-mini.available {
+        background-color: #9fe29f;
+    }
+    
+    .seat-mini.selected {
+        background-color: #007bff;
+    }
+    
+    .seat-mini.booked {
+        background-color: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fare = {{ schedule.fare }};
+        const selectedSeats = [];
+        const proceedButton = document.getElementById('proceed-button');
+        const totalAmountElement = document.getElementById('total-amount');
+        const selectedSeatsElement = document.getElementById('selected-seats');
+        
+        // Add click event to seats
+        document.querySelectorAll('.seat.available').forEach(seat => {
+            seat.addEventListener('click', function() {
+                const seatId = this.dataset.seatId;
+                const seatNumber = this.dataset.seatNumber;
+                
+                if (this.classList.contains('selected')) {
+                    // Deselect the seat
+                    this.classList.remove('selected');
+                    const index = selectedSeats.findIndex(s => s.id === seatId);
+                    if (index !== -1) {
+                        selectedSeats.splice(index, 1);
+                    }
+                } else {
+                    // Select the seat
+                    this.classList.add('selected');
+                    selectedSeats.push({
+                        id: seatId,
+                        number: seatNumber
+                    });
+                }
+                
+                // Update the summary
+                updateSummary();
+            });
+        });
+        
+        // Update booking summary
+        function updateSummary() {
+            if (selectedSeats.length > 0) {
+                selectedSeatsElement.textContent = selectedSeats.map(seat => seat.number).join(', ');
+                totalAmountElement.textContent = (fare * selectedSeats.length).toFixed(2);
+                proceedButton.disabled = false;
+                
+                // Update proceed button URL with selected seats
+                const seatIds = selectedSeats.map(seat => seat.id).join(',');
+                proceedButton.href = `{% url 'bus:booking' pk=schedule.pk %}?seats=${seatIds}`;
+            } else {
+                selectedSeatsElement.textContent = 'None';
+                totalAmountElement.textContent = '0.00';
+                proceedButton.disabled = true;
+                proceedButton.href = `{% url 'bus:booking' pk=schedule.pk %}`;
+            }
+        }
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

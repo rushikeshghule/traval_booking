@@ -1,0 +1,336 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block title %}{% trans "Sign In" %} - Travel Booking System{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&h=1080&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    
+    /**
+     * Styles for the login form
+     */
+    .login-container {
+        max-width: 500px;
+        margin: 2rem auto;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 20px;
+    }
+    
+    .login-card {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: white;
+        overflow: hidden;
+    }
+
+    .login-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .login-card .card-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border-radius: 15px 15px 0 0;
+        padding: 1.5rem;
+        text-align: center;
+        border-bottom: none;
+    }
+
+    .login-card .card-header .card-title {
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin: 0;
+        font-size: 1.5rem;
+    }
+
+    .login-card .card-body {
+        padding: 2rem;
+    }
+
+    .login-card .form-control {
+        border-radius: 10px;
+        padding: 0.8rem 1.2rem;
+        border: 1px solid #e2e8f0;
+        background-color: #f8fafc;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .login-card .form-control:focus {
+        border-color: var(--primary-color);
+        background-color: white;
+        box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+    }
+
+    .login-card .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .login-card .btn-primary {
+        padding: 0.8rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border: none;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .login-card .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .login-card .card-footer {
+        background: #f8fafc;
+        border-top: none;
+        border-radius: 0 0 15px 15px;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .login-card .card-footer a {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .login-card .card-footer a:hover {
+        color: var(--secondary-color);
+        text-decoration: underline;
+    }
+
+    .login-card .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #64748b;
+        transition: color 0.3s ease;
+    }
+
+    .login-card .password-toggle:hover {
+        color: var(--primary-color);
+    }
+
+    .login-card .social-login {
+        margin-top: 2rem;
+    }
+
+    .login-card .social-login hr {
+        margin: 1.5rem 0;
+        border-color: #e2e8f0;
+    }
+
+    .login-card .social-login .btn {
+        margin: 0 0.5rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+        background-color: white;
+    }
+
+    .login-card .social-login .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .login-card .social-login .btn-google {
+        color: #ea4335;
+    }
+    
+    .login-card .social-login .btn-facebook {
+        color: #4a4a4a !important;
+    }
+    
+    .login-card .form-text {
+        font-size: 0.875rem;
+        color: #64748b;
+    }
+    
+    .login-card a.forgot-password {
+        display: inline-block;
+        margin-top: 0.5rem;
+        color: var(--primary-color);
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .login-card a.forgot-password:hover {
+        color: var(--secondary-color);
+        text-decoration: underline;
+    }
+    
+    /* Error messages */
+    .alert-error {
+        background-color: #fee2e2;
+        border-color: #fecaca;
+        color: #ef4444;
+    }
+    
+    .errorlist {
+        color: #ef4444;
+        list-style: none;
+        padding-left: 0;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    /* Other social buttons that might be blue */
+    .btn-twitter {
+        background-color: #2ecc71 !important;
+        border-color: #2ecc71 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container fade-in">
+    <div class="login-card">
+        <div class="card-header">
+            <h3 class="card-title"style="color: #e2e8f0 !important;">{% trans "Sign In" %}</h3>
+        </div>
+        <div class="card-body">
+            {% if form.errors %}
+                <div class="alert alert-danger mb-4">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <form method="post" action="{% url 'account_login' %}" id="loginForm">
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+                
+                <div class="mb-4">
+                    <label for="id_login" class="form-label">{% trans "Email Address" %}</label>
+                    <input type="email" name="login" placeholder="email@example.com" class="form-control {% if form.login.errors %}is-invalid{% endif %}" id="id_login" required>
+                    {% if form.login.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.login.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-4 position-relative">
+                    <label for="id_password" class="form-label">{% trans "Password" %}</label>
+                    <input type="password" name="password" placeholder="Enter your password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" id="id_password" required>
+                    <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                    {% if form.password.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="remember" class="form-check-input" id="id_remember">
+                    <label class="form-check-label" for="id_remember">{% trans "Remember Me" %}</label>
+                </div>
+                
+                <div class="mb-4">
+                    <a href="{% url 'account_reset_password' %}" class="forgot-password">
+                        {% trans "Forgot your password?" %}
+                    </a>
+                </div>
+                
+                <div class="d-grid">
+                    <button class="btn btn-primary" type="submit" id="submitBtn">
+                        <span id="submitText"style="color: #e2e8f0 !important;">{% trans "Sign In" %}</span>
+                        <span id="loadingSpinner" class="d-none">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            <span class="ms-2"style="color: #e2e8f0 !important;">{% trans "Signing in..." %}</span>
+                        </span>
+                    </button>
+                </div>
+
+                {% get_providers as socialaccount_providers %}
+                {% if socialaccount_providers %}
+                <div class="social-login">
+                    <div class="text-center text-muted">
+                        <span>{% trans "Or continue with" %}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-center gap-3">
+                        {% for provider in socialaccount_providers %}
+                            {% if provider.id == 'google' %}
+                                <a href="{% provider_login_url provider.id process='login' %}" class="btn btn-google">
+                                    <i class="fab fa-google me-2"></i> Google
+                                </a>
+                            {% elif provider.id == 'facebook' %}
+                                <a href="{% provider_login_url provider.id process='login' %}" class="btn btn-facebook">
+                                    <i class="fab fa-facebook-f me-2"></i> Facebook
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+        <div class="card-footer">
+            <p class="mb-0">
+                {% trans "Don't have an account?" %} <a href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/**
+ * Handles login form interactions
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // Password toggle functionality
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('id_password');
+
+    togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+
+    // Form submission
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+
+    form.addEventListener('submit', function() {
+        submitBtn.disabled = true;
+        submitText.classList.add('d-none');
+        loadingSpinner.classList.remove('d-none');
+    });
+});
+</script>
+{% endblock %} 

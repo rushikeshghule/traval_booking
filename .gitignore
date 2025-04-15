@@ -1,0 +1,72 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+*.whl
+*.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+/home/dev73/CascadeProjects/travel_booking_system/venv
+
+# Django
+*.log
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.db
+.config/
+config/
+.codeium/
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# Environment variables
+.env
+*.env
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Pytest
+.cache/
+pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Other
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.db

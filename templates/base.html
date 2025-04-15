@@ -1,0 +1,740 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Travel Booking System{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Custom CSS Inline -->
+    <style>
+        /* Elegant professional theme with luxury aesthetic */
+        :root {
+            --primary-color: #192a56;       /* Deep navy blue - elegant and authoritative */
+            --primary-dark: #0c1f3f;        /* Darker navy for depth */
+            --primary-light: #273c75;       /* Lighter navy for accents */
+            --accent-color: #c0392b;        /* Rich burgundy accent for sophistication */
+            --accent-light: #e74c3c;        /* Brighter red for highlights and CTAs */
+            --gold-accent: #e6b54c;         /* Elegant gold for luxury feel */
+            --text-primary: #2c3e50;        /* Rich dark blue for main text */
+            --text-secondary: #5d6d7e;      /* Sophisticated gray for secondary content */
+            --bg-light: #f9f9f7;            /* Ivory/cream background for elegance */
+            --bg-white: #ffffff;            /* Pure white for content areas */
+            --success-color: #27ae60;       /* Refined green */
+            --warning-color: #f39c12;       /* Amber for warnings */
+            --danger-color: #c0392b;        /* Burgundy for errors/danger */
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Refined shadow */
+            --sidebar-width: 260px;
+            --topbar-height: 70px;
+            --card-border-radius: 8px;
+            --button-border-radius: 6px;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-primary);
+            background-color: var(--bg-light);
+            line-height: 1.6;
+        }
+
+        /* Elegant sidebar with deep navy and subtle gold accent */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: var(--sidebar-width);
+            background: linear-gradient(160deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            z-index: 1000;
+            overflow-y: auto;
+            border-right: 1px solid rgba(230, 181, 76, 0.1); /* Subtle gold border */
+        }
+        
+        .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(0, 0, 0, 0.15);
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .sidebar-header h3 {
+            margin: 0;
+            font-weight: 700;
+        }
+        
+        .sidebar-menu {
+            padding: 0;
+            list-style: none;
+            margin-bottom: 0;
+        }
+        
+        .sidebar-menu li a {
+            padding: 14px 20px;
+            display: block;
+            color: rgba(255, 255, 255, 0.85) !important;
+            text-decoration: none;
+            transition: 0.3s;
+            border-left: 3px solid transparent;
+            letter-spacing: 0.3px;
+            font-weight: 400;
+        }
+        
+        .sidebar-menu li a:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-left: 3px solid var(--gold-accent);
+            color: white !important;
+        }
+        
+        .sidebar-menu li a.active {
+            background: rgba(0, 0, 0, 0.15);
+            border-left: 3px solid var(--gold-accent);
+            color: white !important;
+            font-weight: 500;
+        }
+        
+        .sidebar-menu i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Sidebar toggling */
+        #sidebar-collapse {
+            display: none;
+        }
+        
+        /* Content area with new styling */
+        .content {
+            margin-left: var(--sidebar-width);
+            padding: 25px;
+            min-height: 100vh;
+            transition: all 0.3s;
+            background-color: var(--bg-light);
+        }
+        
+        /* Topbar with white background and teal accents */
+        .topbar {
+            height: var(--topbar-height);
+            background: var(--bg-white);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            margin-bottom: 25px;
+            border-radius: var(--card-border-radius);
+        }
+        
+        .menu-toggle {
+            display: none;
+            font-size: 24px;
+            color: var(--primary-color) !important;
+            cursor: pointer;
+        }
+        
+        .user-info {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .user-info .dropdown-toggle::after {
+            margin-left: 0.5rem;
+        }
+        
+        .user-info .dropdown-menu {
+            border: none;
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            padding: 0.5rem 0;
+            min-width: 210px;
+        }
+        
+        .user-info .dropdown-item {
+            padding: 0.6rem 1.2rem;
+            color: var(--text-primary);
+            transition: background-color 0.3s;
+        }
+        
+        .user-info .dropdown-item:hover {
+            background-color: rgba(0, 131, 143, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .user-info .dropdown-divider {
+            margin: 0.3rem 0;
+        }
+        
+        .card {
+            box-shadow: var(--shadow);
+            border-radius: var(--card-border-radius);
+            border: none;
+            margin-bottom: 25px;
+            overflow: hidden;
+            background-color: var(--bg-white);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+        
+        .card-header {
+            background-color: var(--bg-white);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            font-weight: 600;
+            padding: 1.2rem 1.75rem;
+            color: var(--primary-color);
+            letter-spacing: 0.3px;
+        }
+        
+        .card-body {
+            padding: 1.75rem;
+        }
+        
+        .card-footer {
+            background-color: var(--bg-light);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 1.5rem;
+        }
+        
+        /* Updated button styles for teal theme */
+        .btn-primary {
+            
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            box-shadow: 0 2px 5px rgba(192, 57, 43, 0.2);
+            transition: all 0.25s;
+            border-radius: var(--button-border-radius);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            padding: 0.5rem 1.25rem;
+          
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-light);
+            border-color: var(--accent-light);
+            box-shadow: 0 4px 8px rgba(192, 57, 43, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline-primary {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            transition: all 0.25s;
+            border-radius: var(--button-border-radius);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            padding: 0.5rem 1.25rem;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 4px 8px rgba(192, 57, 43, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Form controls */
+        .form-control {
+            border-radius: 6px;
+            padding: 0.65rem 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            transition: all 0.25s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(25, 42, 86, 0.15);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        /* Messages */
+        .messages {
+            margin-bottom: 20px;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+            box-shadow: var(--shadow);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: calc(-1 * var(--sidebar-width));
+            }
+            
+            .sidebar.active {
+                margin-left: 0;
+                z-index: 1050;
+            }
+            
+            .content {
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            .content.active {
+                margin-left: var(--sidebar-width);
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            #sidebar-collapse {
+                display: block;
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                color: white;
+                cursor: pointer;
+            }
+            
+            .card-body {
+                padding: 1.25rem;
+            }
+            
+            .topbar {
+                margin-bottom: 15px;
+            }
+        }
+        
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Main content container */
+        .main-content {
+            border-radius: var(--card-border-radius);
+            background: var(--bg-white);
+            box-shadow: var(--shadow);
+            padding: 30px;
+        }
+        
+        /* Custom CSS for auth pages */
+        .auth-page-sidebar {
+            display: none !important;
+        }
+        
+        .auth-page-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+        
+        .auth-page-toggle {
+            display: none !important;
+        }
+        
+        /* Menu toggle button (sometimes blue) */
+        .menu-toggle i {
+            color: var(--primary-color) !important;
+        }
+        
+        /* User icon (sometimes blue) */
+        .user-info i {
+            color: var(--primary-color) !important;
+        }
+        
+        /* Ensure ALL sidebar text is white with high specificity */
+        .sidebar, .sidebar * {
+            color: white !important;
+        }
+        
+        /* Make sure icons are white too */
+        .sidebar i {
+            color: white !important;
+        }
+        
+        /* Button styles to match the purple theme */
+        .btn-secondary {
+            background-color: #9b59b6;
+            border-color: #9b59b6;
+            box-shadow: 0 2px 4px rgba(155, 89, 182, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #8e44ad;
+            border-color: #8e44ad;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(155, 89, 182, 0.4);
+        }
+        
+        .btn-outline-secondary {
+            color: #9b59b6;
+            border-color: #9b59b6;
+            transition: all 0.3s;
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: #9b59b6;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(155, 89, 182, 0.4);
+        }
+         /* New animated logo styles */
+         .logo-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+        
+        .logo-text {
+            font-weight: 600;
+            font-size: 1.3rem;
+            letter-spacing: 0.6px;
+            color: white !important;
+            margin: 0;
+        }
+        
+        .logo-icon {
+            color: var(--gold-accent) !important;
+            font-size: 1.5rem;
+            margin-right: 12px;
+        }
+        
+        /* Replace existing destination images with more elegant ones */
+        #mountain-destination-img {
+            content: url('https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=2070&auto=format&fit=crop');
+        }
+        
+        #beach-destination-img {
+            content: url('https://images.unsplash.com/photo-1573843981267-be1999ff37cd?q=80&w=2074&auto=format&fit=crop');
+        }
+        
+        #city-destination-img {
+            content: url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070&auto=format&fit=crop');
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+    <script>
+        // Hide sidebar immediately on auth pages to prevent flashing
+        if (window.location.pathname.includes('/login') || 
+            window.location.pathname.includes('/signup') || 
+            window.location.pathname.includes('/account/login') || 
+            window.location.pathname.includes('/account/signup')) {
+            document.documentElement.classList.add('auth-page');
+        }
+
+        // Immediately detect if we're on a logout page and add appropriate classes
+        (function() {
+            if (window.location.pathname.includes('/logout/') || 
+                window.location.pathname.includes('/account/logout/') || 
+                window.location.pathname.includes('/accounts/logout/')) {
+                document.body.classList.add('logout');
+                
+                // Find the main content container and enhance it
+                setTimeout(function() {
+                    const mainContent = document.querySelector('.main-content');
+                    if (mainContent) {
+                        mainContent.classList.add('logout-bg');
+                        
+                        // Add a nice logout icon if there isn't one already
+                        if (!mainContent.querySelector('.logout-icon')) {
+                            const heading = mainContent.querySelector('h1, h2, h3');
+                            if (heading) {
+                                const icon = document.createElement('i');
+                                icon.className = 'fas fa-sign-out-alt logout-icon';
+                                heading.parentNode.insertBefore(icon, heading);
+                            }
+                        }
+                    }
+                }, 100);
+            }
+        })();
+    </script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar {% if 'login' in request.path or 'signup' in request.path %}auth-page-sidebar{% endif %}" id="sidebar">
+        <div class="sidebar-header" style=" background-image: url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbjBybmZoZXF0aTRhdHZiaHdqa29hczNkaXVreGI0aGF0ZjEzZG9vcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/mPsvssR8lWCf6/giphy.gif'); background-size: cover; background-position: center; position: relative;">
+            <!-- Overlay to ensure text readability -->
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(2, 9, 46, 0.7);"></div>
+            <div class="logo-container" style="position: relative; z-index: 1;">
+                <!-- Added animated glow effect -->
+                <div class="logo-glow"></div>
+                <i class="fas fa-plane-departure logo-icon me-2"></i>
+                <h2 class="logo-text">Travel Booking</h2>
+                <span style="color: rgba(255,255,255,0.7); font-size: 12px;">Your journey begins here</span>
+            </div>
+            <button class="btn btn-link p-0 border-0" id="sidebar-collapse" aria-label="Close sidebar" style="position: relative; z-index: 1;">
+                <i class="fas fa-times" style="color: white; font-size: 1.2rem;"></i>
+            </button>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">
+                <i class="fas fa-home"></i> Home
+            </a></li>
+            
+            <li><a href="{% url 'bus:search' %}" class="{% if 'bus' in request.path %}active{% endif %}">
+                <i class="fas fa-bus"></i> Bus Booking
+            </a></li>
+            
+            <li><a href="{% url 'flight:search' %}" class="{% if 'flight' in request.path %}active{% endif %}">
+                <i class="fas fa-plane"></i> Flight Booking
+            </a></li>
+            
+            <li><a href="{% url 'train:search' %}" class="{% if 'train' in request.path %}active{% endif %}">
+                <i class="fas fa-train"></i> Train Booking
+            </a></li>
+            
+            <li><a href="{% url 'hotel:search' %}" class="{% if 'hotel' in request.path %}active{% endif %}">
+                <i class="fas fa-hotel"></i> Hotel Booking
+            </a></li>
+            
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'accounts:dashboard' %}" class="{% if 'dashboard' in request.path %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a></li>
+                
+                <li><a href="{% url 'accounts:bookings' %}" class="{% if 'bookings' in request.path %}active{% endif %}">
+                    <i class="fas fa-ticket-alt"></i> My Bookings
+                </a></li>
+                
+                <li><a href="{% url 'accounts:profile' %}" class="{% if 'profile' in request.path %}active{% endif %}">
+                    <i class="fas fa-user"></i> My Profile
+                </a></li>
+                
+                <li><a href="{% url 'account_logout' %}">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a></li>
+            {% else %}
+                <li><a href="{% url 'account_login' %}" class="{% if 'login' in request.path %}active{% endif %}">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a></li>
+                
+                <li><a href="{% url 'account_signup' %}" class="{% if 'signup' in request.path %}active{% endif %}">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    
+    <!-- Content -->
+    <div class="content {% if 'login' in request.path or 'signup' in request.path %}auth-page-content{% endif %}" id="content">
+        <div class="topbar">
+            <div class="menu-toggle {% if 'login' in request.path or 'signup' in request.path %}auth-page-toggle{% endif %}" id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            
+            <div class="user-info">
+                {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <a class="dropdown-toggle text-decoration-none d-flex align-items-center" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://ui-avatars.com/api/?name={{ user.get_full_name|urlencode }}&background=3498db&color=fff" alt="{{ user.get_full_name }}" class="rounded-circle" width="40" height="40">
+                            <span class="ms-2">{{ user.get_full_name }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{% url 'accounts:dashboard' %}"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="fas fa-user me-2"></i> My Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:bookings' %}"><i class="fas fa-ticket-alt me-2"></i> My Bookings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href="{% url 'account_login' %}" class="btn btn-outline-secondary btn-sm me-2">Login</a>
+                    <a href="{% url 'account_signup' %}" class="btn btn-secondary btn-sm">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Messages -->
+        {% if messages %}
+            <div class="messages fade-in">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            {% if request.path == '/' %}
+            <!-- Hero section with elegant styling -->
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1>Discover Extraordinary Journeys</h1>
+                    <p>Experience travel with unparalleled luxury and comfort</p>
+                    <a href="{% url 'flight:search' %}" class="btn btn-primary btn-lg me-3">Find Flights</a>
+                    <a href="{% url 'hotel:search' %}" class="btn btn-gold btn-lg">Luxury Hotels</a>
+                </div>
+            </div>
+
+            <!-- Animated travel icons section -->
+            <div class="animated-icons">
+                <div class="animated-icon-box">
+                    <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&h=300&fit=crop" alt="Flight" class="animated-icon">
+                    <div>Flights</div>
+                </div>
+                <div class="animated-icon-box">
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&h=300&fit=crop" alt="Hotel" class="animated-icon">
+                    <div>Hotels</div>
+                </div>
+                <div class="animated-icon-box">
+                    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=500&h=300&fit=crop" alt="Bus" class="animated-icon">
+                    <div>Buses</div>
+                </div>
+                <div class="animated-icon-box">
+                    <img src="https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=500&h=300&fit=crop" alt="Train" class="animated-icon">
+                    <div>Trains</div>
+                </div>
+            </div>
+
+            <!-- Update section title with elegant styling -->
+            <h3 class="section-title">Popular Destinations</h3>
+
+            <!-- Enhanced destination cards with improved layout -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="destination-card">
+                        <img id="beach-destination-img" alt="Beach destination">
+                        <div class="card-body">
+                            <h5>Luxury Beach Retreat</h5>
+                            <p>Indulge in pristine beaches and crystal waters</p>
+                            <a href="#" class="btn btn-sm btn-outline-primary mt-2">Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="destination-card">
+                        <img id="mountain-destination-img" alt="Mountain destination">
+                        <div class="card-body">
+                            <h5>Alpine Escape</h5>
+                            <p>Breathtaking mountain vistas and adventure</p>
+                            <a href="#" class="btn btn-sm btn-outline-primary mt-2">Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="destination-card">
+                        <img id="city-destination-img" alt="City destination">
+                        <div class="card-body">
+                            <h5>Metropolitan Journey</h5>
+                            <p>Experience sophisticated urban culture</p>
+                            <a href="#" class="btn btn-sm btn-outline-primary mt-2">Explore</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+    /**
+     * Handles sidebar toggling and UI interactions
+     */
+    $(document).ready(function() {
+        // Sidebar toggle
+        $('#menu-toggle').click(function() {
+            $('#sidebar').toggleClass('active');
+            $('#content').toggleClass('active');
+        });
+        
+        $('#sidebar-collapse').click(function() {
+            $('#sidebar').toggleClass('active');
+            $('#content').toggleClass('active');
+        });
+        
+        // Popovers and tooltips
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl)
+        })
+        
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+
+    /**
+     * Shows loading animation when navigating between pages
+     * @returns {void}
+     */
+    function showLoader() {
+        const loader = document.createElement('div');
+        loader.className = 'loader-container';
+        loader.innerHTML = '<div class="loader"></div>';
+        document.body.appendChild(loader);
+        
+        setTimeout(() => {
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                document.body.removeChild(loader);
+            }, 500);
+        }, 1500);
+    }
+
+    // Show loading animation on page transitions
+    $('a:not([target="_blank"])').click(function() {
+        if (this.hostname === window.location.hostname) {
+            showLoader();
+        }
+    });
+    
+    // Hide loader when page is fully loaded
+    $(window).on('load', function() {
+        $('.loader-container').fadeOut('slow');
+    });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

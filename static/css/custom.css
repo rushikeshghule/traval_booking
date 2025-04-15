@@ -1,0 +1,23 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+  --hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.auth-links .nav-link {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  padding: 8px 20px !important;
+}
+
+.auth-links .nav-link:hover {
+  background: var(--primary-gradient);
+  color: white !important;
+  transform: translateY(-2px);
+}

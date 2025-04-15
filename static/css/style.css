@@ -1,0 +1,712 @@
+/**
+ * Global styles for the Travel Booking System
+ */
+
+:root {
+    /* Professional Theme */
+    --primary-color: #4a6670;      /* Slate blue-gray */
+    --secondary-color: #344955;    /* Darker slate */
+    --accent-color: #c26d2c;       /* Muted amber/bronze - subtle accent */
+    --info-color: #6b7d8c;         /* Medium gray-blue */
+    --success-color: #5b8a72;      /* Muted green */
+    --warning-color: #d4a76a;      /* Muted gold */
+    --danger-color: #b05656;       /* Muted red */
+    --text-color: #333;
+    --text-light: #666;
+    --text-muted: #888;
+    --bg-light: #f8f9fa;           /* Light gray background */
+    --bg-gray: #f0f2f5;            /* Light gray */
+    --border-color: #e1e4e8;       /* Light border color */
+    --shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    --sidebar-width: 250px;
+    --topbar-height: 60px;
+}
+
+body {
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    background-color: var(--bg-gray);
+    color: var(--text-color);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* Card styling */
+.card {
+    border: none;
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-footer {
+    padding: 1rem 1.5rem;
+    background-color: var(--bg-light);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Form controls */
+.form-control {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.6rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(74, 102, 112, 0.25);
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary, .btn-info, .btn-primary.disabled {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active,
+.btn-info:hover, .btn-info:focus, .btn-info:active {
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+    color: white !important;
+}
+
+.btn-outline-primary, .btn-outline-info {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus,
+.btn-outline-info:hover, .btn-outline-info:focus {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Alerts and messages */
+.alert {
+    border-radius: 10px;
+    border: none;
+    box-shadow: var(--shadow);
+    padding: 1rem 1.5rem;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Form validation */
+.invalid-feedback {
+    font-size: 0.875rem;
+    color: #dc3545;
+    margin-top: 0.25rem;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    padding-right: calc(1.5em + 0.75rem);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .card-body {
+        padding: 1.25rem;
+    }
+    
+    .card-header, .card-footer {
+        padding: 0.75rem 1.25rem;
+    }
+}
+
+/* Authentication pages styles */
+.auth-page-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+}
+
+.auth-page-content .menu-toggle {
+    display: none !important;
+}
+
+/* Change link colors */
+a:not(.btn):not(.nav-link), .link, .link-primary, .link-info {
+    color: var(--primary-color) !important;
+    text-decoration: none;
+}
+
+a:not(.btn):not(.nav-link):hover, .link:hover, .link-primary:hover, .link-info:hover {
+    color: var(--accent-color) !important;
+    text-decoration: underline;
+}
+
+/* Replace alert-info blues */
+.alert-info, .bg-info {
+    background-color: rgba(22, 160, 133, 0.2) !important;
+    border-color: rgba(22, 160, 133, 0.3) !important;
+    color: #0d5446 !important;
+}
+
+/* Replace text-primary blues */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+/* Avatar background for user icons */
+.user-avatar-bg {
+    background-color: var(--primary-color) !important;
+}
+
+/* Form input focus state (blue outline) */
+.form-control:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.25rem rgba(46, 204, 113, 0.25) !important;
+}
+
+/* Progress bars and other elements */
+.progress-bar, .bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+/* Badge primary */
+.badge-primary, .badge.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+/* Checkbox/radio colors when checked */
+.form-check-input:checked {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Nav pills and tabs */
+.nav-pills .nav-link.active, 
+.nav-pills .show > .nav-link {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-color) !important;
+    border-color: #dee2e6 #dee2e6 #fff !important;
+}
+
+/* Pagination */
+.page-item.active .page-link {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.page-link {
+    color: var(--primary-color) !important;
+}
+
+.page-link:hover {
+    color: var(--secondary-color) !important;
+}
+
+/* COMPREHENSIVE BOOTSTRAP OVERRIDES - ORANGE THEME */
+
+/* Links (ALL of them) */
+a:not(.btn):not(.nav-link), .link, .link-primary, .link-info {
+    color: var(--primary-color) !important;
+    text-decoration: none;
+}
+
+a:not(.btn):not(.nav-link):hover, .link:hover, .link-primary:hover, .link-info:hover {
+    color: var(--accent-color) !important;
+    text-decoration: underline;
+}
+
+/* Text colors */
+.text-primary, .text-info, .text-blue {
+    color: var(--primary-color) !important;
+}
+
+/* Background colors */
+.bg-primary, .bg-info, .bg-blue {
+    background-color: var(--primary-color) !important;
+}
+
+.bg-light {
+    background-color: var(--bg-light) !important;
+}
+
+/* Alerts */
+.alert-primary, .alert-info {
+    background-color: rgba(230, 126, 34, 0.2) !important;
+    border-color: rgba(230, 126, 34, 0.3) !important;
+    color: #b05c0e !important;
+}
+
+/* Cards */
+.card-header-primary, .card-header-info {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Borders */
+.border-primary, .border-info {
+    border-color: var(--primary-color) !important;
+}
+
+/* Form inputs */
+.form-control:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.25rem rgba(230, 126, 34, 0.25) !important;
+}
+
+/* Checkboxes and radios */
+.form-check-input:checked {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Navigation */
+.nav-pills .nav-link.active, 
+.nav-pills .show > .nav-link {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+    color: var(--primary-color) !important;
+    border-color: #dee2e6 #dee2e6 #fff !important;
+}
+
+.nav-link {
+    color: var(--text-color) !important;
+}
+
+.nav-link:hover, .nav-link:focus {
+    color: var(--accent-color) !important;
+}
+
+/* Pagination */
+.page-item.active .page-link {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.page-link {
+    color: var(--primary-color) !important;
+}
+
+.page-link:hover {
+    color: var(--secondary-color) !important;
+}
+
+/* Dropdowns */
+.dropdown-item.active, .dropdown-item:active {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* List groups */
+.list-group-item.active {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Progress bars */
+.progress-bar {
+    background-color: var(--primary-color) !important;
+}
+
+/* Spinners */
+.spinner-border-primary, .spinner-border-info,
+.spinner-grow-primary, .spinner-grow-info {
+    color: var(--primary-color) !important;
+}
+
+/* Badges */
+.badge.bg-primary, .badge.bg-info {
+    background-color: var(--primary-color) !important;
+}
+
+/* Toasts */
+.toast-header {
+    color: var(--primary-color) !important;
+}
+
+/* Tables */
+.table-primary {
+    background-color: rgba(230, 126, 34, 0.1) !important;
+}
+
+/* Custom section titles that might be blue */
+.section-title, .card-title, h
+
+/* Make all sidebar text white with high specificity */
+.sidebar, 
+.sidebar *,
+.sidebar h1, 
+.sidebar h2, 
+.sidebar h3, 
+.sidebar h4, 
+.sidebar h5, 
+.sidebar h6,
+.sidebar p,
+.sidebar span,
+.sidebar div,
+.sidebar a,
+.sidebar .sidebar-menu li a,
+.sidebar-header h3 {
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure icons are also white */
+.sidebar i,
+.sidebar .fa,
+.sidebar .fas,
+.sidebar .far,
+.sidebar .fab,
+.sidebar-menu i {
+    color: white !important;
+}
+
+/* Special hover states for sidebar links */
+.sidebar-menu li a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 3px solid var(--accent-color);
+    color: white !important;
+}
+
+.sidebar-menu li a.active {
+    background: rgba(255, 255, 255, 0.2);
+    border-left: 3px solid var(--accent-color);
+    color: white !important;
+}
+
+/* Target any custom classes you might have */
+.sidebar .nav-text,
+.sidebar .menu-text,
+.sidebar .menu-label,
+.sidebar .sidebar-title {
+    color: white !important;
+}
+
+/* Dashboard text visibility fixes */
+.dashboard-card,
+.dashboard-panel,
+.dashboard-container,
+.card,
+.main-content {
+    /* Ensure text is dark and visible on light backgrounds */
+    color: #333 !important;
+}
+
+/* Dashboard card and panel specific fixes */
+.card-body h1, 
+.card-body h2, 
+.card-body h3, 
+.card-body h4, 
+.card-body h5, 
+.card-body h6,
+.card-body p,
+.card-body span,
+.card-body div,
+.card-body li,
+.dashboard-text {
+    color: #333 !important;
+}
+
+/* Fix for card titles that might be using primary color */
+.card-title, 
+.dashboard-title,
+.section-title {
+    color: #333 !important;
+    font-weight: 600 !important;
+}
+
+/* For dashboard elements that have white text on colored backgrounds */
+.bg-primary .text-white,
+.bg-info .text-white,
+.card-header .text-white,
+[class*="bg-"] .text-white {
+    color: white !important;
+}
+
+/* Fix text in tables */
+table, th, td, .table {
+    color: #333 !important;
+}
+
+/* Ensure links are visible */
+.card a:not(.btn), 
+.dashboard-container a:not(.btn) {
+    color: var(--primary-color) !important;
+    text-decoration: none;
+}
+
+.card a:not(.btn):hover, 
+.dashboard-container a:not(.btn):hover {
+    color: var(--secondary-color) !important;
+    text-decoration: underline;
+}
+
+/* Specific fix for any white text on light backgrounds */
+.text-white:not([class*="bg-"] *):not(.btn):not(.badge) {
+    color: #333 !important;
+}
+
+/* PROFESSIONAL THEME STYLING */
+
+/* General styling */
+body {
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    background-color: var(--bg-gray);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+/* Cards and containers */
+.card {
+    border: none;
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+}
+
+.main-content {
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+}
+
+/* Text styling */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    box-shadow: none;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Accent buttons */
+.btn-accent {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+.btn-accent:hover {
+    background-color: #a85a1f;
+    border-color: #a85a1f;
+}
+
+/* Sidebar styling */
+.sidebar {
+    background: var(--secondary-color);
+    background: linear-gradient(180deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+    color: white;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+    background: rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-menu li a {
+    color: rgba(255, 255, 255, 0.85);
+    border-left: 3px solid transparent;
+    font-weight: 400;
+    padding: 12px 20px;
+}
+
+.sidebar-menu li a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border-left: 3px solid var(--accent-color);
+}
+
+.sidebar-menu li a.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-left: 3px solid var(--accent-color);
+}
+
+.sidebar-menu i {
+    color: rgba(255, 255, 255, 0.7);
+    margin-right: 10px;
+}
+
+/* Topbar styling */
+.topbar {
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+}
+
+.menu-toggle {
+    color: var(--primary-color);
+}
+
+.user-info img {
+    border: 2px solid var(--border-color);
+}
+
+/* Tables */
+.table th {
+    font-weight: 600;
+    color: var(--primary-color);
+    border-top: none;
+    background-color: var(--bg-light);
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* Navigation */
+.nav-tabs .nav-link.active {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Links */
+a:not(.btn):not(.nav-link) {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:not(.btn):not(.nav-link):hover {
+    color: var(--accent-color);
+}
+
+/* Badges */
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+}
+
+.badge.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.badge.bg-success {
+    background-color: var(--success-color) !important;
+}
+
+.badge.bg-warning {
+    background-color: var(--warning-color) !important;
+    color: #212529;
+}
+
+.badge.bg-danger {
+    background-color: var(--danger-color) !important;
+}
+
+/* Dashboard cards */
+.dashboard-stat-card {
+    transition: transform 0.3s;
+}
+
+.dashboard-stat-card:hover {
+    transform: translateY(-3px);
+}
+
+/* Fix text visibility in all booking components */
+.card, .card-body, .card-title, .card-text, 
+.form-label, .form-control, 
+.table th, .table td,
+.booking-form, .booking-result,
+.result-card, .detail-card {
+    color: #333 !important;
+}
+
+/* Online fallback images when image paths are broken */
+img.card-img-top:not([src]), 
+img.card-img-top[src=""], 
+img.card-img-top[src="#"] {
+    content: url('https://images.unsplash.com/photo-1517842645767-c639042777db?w=500&h=300&fit=crop');
+}
+
+/* Fix for profile images */
+img.user-avatar:not([src]), 
+img.user-avatar[src=""], 
+img.user-avatar[src="#"] {
+    content: url('https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop');
+} 

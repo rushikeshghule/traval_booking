@@ -1,0 +1,491 @@
+{% extends 'base.html' %}
+
+{% block title %}Train Search Results - Travel Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-train me-2"></i>Train Search Results</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p class="mb-1 text-muted">From</p>
+                            <h5>{{ source }}</h5>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="mb-1 text-muted">To</p>
+                            <h5>{{ destination }}</h5>
+                        </div>
+                        <div class="col-md-2">
+                            <p class="mb-1 text-muted">Departure</p>
+                            <h5>{{ departure_date|date:"d M Y" }}</h5>
+                        </div>
+                        {% if return_date %}
+                        <div class="col-md-2">
+                            <p class="mb-1 text-muted">Return</p>
+                            <h5>{{ return_date|date:"d M Y" }}</h5>
+                        </div>
+                        {% endif %}
+                        <div class="col-md-2">
+                            <p class="mb-1 text-muted">Passengers</p>
+                            <h5>{{ passengers }} ({{ train_class|title }})</h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'train:search' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-search me-1"></i> Modify Search
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Filter Results</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-2">Train Operators</h6>
+                    <div id="operator-filters">
+                        {% for train in outbound_trains %}
+                            <div class="form-check mb-2">
+                                <input class="form-check-input filter-operator" type="checkbox" value="{{ train.operator.code }}" id="operator-{{ train.operator.code }}" checked>
+                                <label class="form-check-label" for="operator-{{ train.operator.code }}">
+                                    {{ train.operator.name }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="mb-2">Departure Time</h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-time" type="checkbox" value="early_morning" id="earlyMorning" checked>
+                        <label class="form-check-label" for="earlyMorning">
+                            Early Morning (00:00 - 06:00)
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-time" type="checkbox" value="morning" id="morning" checked>
+                        <label class="form-check-label" for="morning">
+                            Morning (06:00 - 12:00)
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-time" type="checkbox" value="afternoon" id="afternoon" checked>
+                        <label class="form-check-label" for="afternoon">
+                            Afternoon (12:00 - 18:00)
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input filter-time" type="checkbox" value="night" id="night" checked>
+                        <label class="form-check-label" for="night">
+                            Night (18:00 - 24:00)
+                        </label>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="mb-2">Train Types</h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-type" type="checkbox" value="express" id="express" checked>
+                        <label class="form-check-label" for="express">
+                            Express
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-type" type="checkbox" value="high_speed" id="highSpeed" checked>
+                        <label class="form-check-label" for="highSpeed">
+                            High Speed
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-type" type="checkbox" value="regional" id="regional" checked>
+                        <label class="form-check-label" for="regional">
+                            Regional
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-type" type="checkbox" value="sleeper" id="sleeper" checked>
+                        <label class="form-check-label" for="sleeper">
+                            Sleeper
+                        </label>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="mb-2">Price Range</h6>
+                    <input type="range" class="form-range" min="0" max="500" step="10" id="priceRange" value="500">
+                    <div class="d-flex justify-content-between">
+                        <span>$0</span>
+                        <span id="priceValue">$500</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <!-- Outbound Trains -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Outbound Trains ({{ outbound_trains.count }})</h5>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Sort by
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+                            <li><a class="dropdown-item" href="#" data-sort="departure">Departure Time</a></li>
+                            <li><a class="dropdown-item" href="#" data-sort="duration">Duration</a></li>
+                            <li><a class="dropdown-item" href="#" data-sort="price-asc">Price: Low to High</a></li>
+                            <li><a class="dropdown-item" href="#" data-sort="price-desc">Price: High to Low</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                {% if outbound_trains %}
+                    {% for train in outbound_trains %}
+                        <div class="card mb-3">
+                            <div class="row g-0">
+                                <div class="col-md-3">
+                                    <img src="https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=300&h=200" class="img-fluid rounded-start" alt="Train">
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-2 text-center mb-3 mb-md-0">
+                                                {% if train.operator.logo %}
+                                                    <img src="{{ train.operator.logo.url }}" alt="{{ train.operator.name }}" class="img-fluid mb-2" style="max-height: 40px;">
+                                                {% else %}
+                                                    <i class="fas fa-train fa-2x mb-2 text-primary"></i>
+                                                {% endif %}
+                                                <h6 class="mb-0">{{ train.operator.name }}</h6>
+                                                <small class="text-muted">{{ train.train_number }}</small>
+                                            </div>
+                                            <div class="col-md-3 mb-3 mb-md-0">
+                                                <div class="text-center">
+                                                    <h5 class="mb-0">{{ train.departure_time|date:"h:i A" }}</h5>
+                                                    <p class="text-muted mb-0">{{ train.departure_time|date:"d M Y" }}</p>
+                                                    <small>{{ train.source.name }}</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 text-center mb-3 mb-md-0">
+                                                <i class="fas fa-long-arrow-alt-right text-muted"></i>
+                                                <small class="d-block text-muted">{{ train.duration }}</small>
+                                                <span class="badge bg-info">{{ train.get_train_type_display }}</span>
+                                            </div>
+                                            <div class="col-md-3 mb-3 mb-md-0">
+                                                <div class="text-center">
+                                                    <h5 class="mb-0">{{ train.arrival_time|date:"h:i A" }}</h5>
+                                                    <p class="text-muted mb-0">{{ train.arrival_time|date:"d M Y" }}</p>
+                                                    <small>{{ train.destination.name }}</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="text-center">
+                                                    <h5 class="mb-0 text-primary">${{ train.base_price }}</h5>
+                                                    <p class="text-muted mb-2">per person</p>
+                                                    <a href="{% url 'train:detail' pk=train.pk %}" class="btn btn-primary btn-sm d-block">Select</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mt-3">
+                                            <div class="col-12">
+                                                <div class="d-flex justify-content-between border-top pt-2">
+                                                    <small>
+                                                        <i class="fas fa-subway me-1"></i> 
+                                                        {% if train.amenities %}
+                                                            {{ train.amenities|truncatechars:30 }}
+                                                        {% else %}
+                                                            Standard Amenities
+                                                        {% endif %}
+                                                    </small>
+                                                    <small><i class="fas fa-chair me-1"></i> {{ train.available_seats }} seats available</small>
+                                                    <small><a href="#" data-bs-toggle="modal" data-bs-target="#trainInfoModal{{ train.pk }}">Train Info</a></small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Train Info Modal -->
+                        <div class="modal fade" id="trainInfoModal{{ train.pk }}" tabindex="-1" aria-labelledby="trainInfoModalLabel{{ train.pk }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="trainInfoModalLabel{{ train.pk }}">Train Information</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h6>{{ train.operator.name }} - {{ train.train_number }}</h6>
+                                        <p><strong>Train Type:</strong> {{ train.get_train_type_display }}</p>
+                                        <hr>
+                                        <p><strong>Departure:</strong> {{ train.departure_time|date:"d M Y, h:i A" }} from {{ train.source.name }}</p>
+                                        <p><strong>Arrival:</strong> {{ train.arrival_time|date:"d M Y, h:i A" }} at {{ train.destination.name }}</p>
+                                        <p><strong>Duration:</strong> {{ train.duration }}</p>
+                                        <hr>
+                                        <h6>Stops</h6>
+                                        <ol class="list-group list-group-numbered">
+                                            {% for stop in train.route.stops.all %}
+                                                <li class="list-group-item d-flex justify-content-between align-items-start">
+                                                    <div class="ms-2 me-auto">
+                                                        <div class="fw-bold">{{ stop.station.name }}</div>
+                                                        {% if stop.arrival_time %}Arrives: {{ stop.arrival_time|date:"h:i A" }}{% endif %}
+                                                    </div>
+                                                    {% if stop.departure_time %}
+                                                        <span class="badge bg-primary rounded-pill">Departs: {{ stop.departure_time|date:"h:i A" }}</span>
+                                                    {% endif %}
+                                                </li>
+                                            {% empty %}
+                                                <li class="list-group-item">No intermediate stops available</li>
+                                            {% endfor %}
+                                        </ol>
+                                        <hr>
+                                        <h6>Amenities</h6>
+                                        <p>{{ train.amenities|default:"Standard accommodations with comfortable seating" }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <a href="{% url 'train:detail' pk=train.pk %}" class="btn btn-primary">Select This Train</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <i class="fas fa-train fa-3x mb-3 text-muted"></i>
+                            <h4>No Outbound Trains Found</h4>
+                            <p class="text-muted">We couldn't find any trains matching your search criteria.</p>
+                            <a href="{% url 'train:search' %}" class="btn btn-primary mt-2">Modify Search</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Return Trains (if applicable) -->
+            {% if journey_type == 'round_trip' and return_trains %}
+            <div class="mb-3">
+                <h5>Return Trains ({{ return_trains.count }})</h5>
+            </div>
+            
+            {% for train in return_trains %}
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-3">
+                            <img src="https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=300&h=200" class="img-fluid rounded-start" alt="Train">
+                        </div>
+                        <div class="col-md-9">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2 text-center mb-3 mb-md-0">
+                                        {% if train.operator.logo %}
+                                            <img src="{{ train.operator.logo.url }}" alt="{{ train.operator.name }}" class="img-fluid mb-2" style="max-height: 40px;">
+                                        {% else %}
+                                            <i class="fas fa-train fa-2x mb-2 text-primary"></i>
+                                        {% endif %}
+                                        <h6 class="mb-0">{{ train.operator.name }}</h6>
+                                        <small class="text-muted">{{ train.train_number }}</small>
+                                    </div>
+                                    <div class="col-md-3 mb-3 mb-md-0">
+                                        <div class="text-center">
+                                            <h5 class="mb-0">{{ train.departure_time|date:"h:i A" }}</h5>
+                                            <p class="text-muted mb-0">{{ train.departure_time|date:"d M Y" }}</p>
+                                            <small>{{ train.source.name }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 text-center mb-3 mb-md-0">
+                                        <i class="fas fa-long-arrow-alt-right text-muted"></i>
+                                        <small class="d-block text-muted">{{ train.duration }}</small>
+                                        <span class="badge bg-info">{{ train.get_train_type_display }}</span>
+                                    </div>
+                                    <div class="col-md-3 mb-3 mb-md-0">
+                                        <div class="text-center">
+                                            <h5 class="mb-0">{{ train.arrival_time|date:"h:i A" }}</h5>
+                                            <p class="text-muted mb-0">{{ train.arrival_time|date:"d M Y" }}</p>
+                                            <small>{{ train.destination.name }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="text-center">
+                                            <h5 class="mb-0 text-primary">${{ train.base_price }}</h5>
+                                            <p class="text-muted mb-2">per person</p>
+                                            <a href="{% url 'train:detail' pk=train.pk %}" class="btn btn-primary btn-sm d-block">Select</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-between border-top pt-2">
+                                            <small>
+                                                <i class="fas fa-subway me-1"></i> 
+                                                {% if train.amenities %}
+                                                    {{ train.amenities|truncatechars:30 }}
+                                                {% else %}
+                                                    Standard Amenities
+                                                {% endif %}
+                                            </small>
+                                            <small><i class="fas fa-chair me-1"></i> {{ train.available_seats }} seats available</small>
+                                            <small><a href="#" data-bs-toggle="modal" data-bs-target="#trainInfoModal{{ train.pk }}">Train Info</a></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Train Info Modal -->
+                <div class="modal fade" id="trainInfoModal{{ train.pk }}" tabindex="-1" aria-labelledby="trainInfoModalLabel{{ train.pk }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="trainInfoModalLabel{{ train.pk }}">Train Information</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h6>{{ train.operator.name }} - {{ train.train_number }}</h6>
+                                <p><strong>Train Type:</strong> {{ train.get_train_type_display }}</p>
+                                <hr>
+                                <p><strong>Departure:</strong> {{ train.departure_time|date:"d M Y, h:i A" }} from {{ train.source.name }}</p>
+                                <p><strong>Arrival:</strong> {{ train.arrival_time|date:"d M Y, h:i A" }} at {{ train.destination.name }}</p>
+                                <p><strong>Duration:</strong> {{ train.duration }}</p>
+                                <hr>
+                                <h6>Stops</h6>
+                                <ol class="list-group list-group-numbered">
+                                    {% for stop in train.route.stops.all %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                            <div class="ms-2 me-auto">
+                                                <div class="fw-bold">{{ stop.station.name }}</div>
+                                                {% if stop.arrival_time %}Arrives: {{ stop.arrival_time|date:"h:i A" }}{% endif %}
+                                            </div>
+                                            {% if stop.departure_time %}
+                                                <span class="badge bg-primary rounded-pill">Departs: {{ stop.departure_time|date:"h:i A" }}</span>
+                                            {% endif %}
+                                        </li>
+                                    {% empty %}
+                                        <li class="list-group-item">No intermediate stops available</li>
+                                    {% endfor %}
+                                </ol>
+                                <hr>
+                                <h6>Amenities</h6>
+                                <p>{{ train.amenities|default:"Standard accommodations with comfortable seating" }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <a href="{% url 'train:detail' pk=train.pk %}" class="btn btn-primary">Select This Train</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Price range slider
+        const priceRange = document.getElementById('priceRange');
+        const priceValue = document.getElementById('priceValue');
+        
+        priceRange.addEventListener('input', function() {
+            priceValue.textContent = '$' + this.value;
+            filterTrains();
+        });
+        
+        // Filter trains
+        const filterTrains = () => {
+            const selectedOperators = Array.from(document.querySelectorAll('.filter-operator:checked')).map(el => el.value);
+            const selectedTimeSlots = Array.from(document.querySelectorAll('.filter-time:checked')).map(el => el.value);
+            const selectedTypes = Array.from(document.querySelectorAll('.filter-type:checked')).map(el => el.value);
+            const maxPrice = priceRange.value;
+            
+            document.querySelectorAll('.train-card').forEach(card => {
+                const operator = card.dataset.operator;
+                const price = parseFloat(card.dataset.price);
+                const trainType = card.dataset.type;
+                const departureHour = parseInt(card.dataset.departureHour);
+                
+                // Check operator
+                const operatorMatch = selectedOperators.includes(operator);
+                
+                // Check train type
+                const typeMatch = selectedTypes.includes(trainType);
+                
+                // Check time slot
+                let timeSlotMatch = false;
+                if (selectedTimeSlots.includes('early_morning') && departureHour >= 0 && departureHour < 6) {
+                    timeSlotMatch = true;
+                } else if (selectedTimeSlots.includes('morning') && departureHour >= 6 && departureHour < 12) {
+                    timeSlotMatch = true;
+                } else if (selectedTimeSlots.includes('afternoon') && departureHour >= 12 && departureHour < 18) {
+                    timeSlotMatch = true;
+                } else if (selectedTimeSlots.includes('night') && departureHour >= 18 && departureHour < 24) {
+                    timeSlotMatch = true;
+                }
+                
+                // Check price
+                const priceMatch = price <= maxPrice;
+                
+                // Show/hide card
+                if (operatorMatch && timeSlotMatch && typeMatch && priceMatch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        };
+        
+        // Add event listeners to all filters
+        document.querySelectorAll('.filter-operator, .filter-time, .filter-type').forEach(filter => {
+            filter.addEventListener('change', filterTrains);
+        });
+        
+        // Sorting logic
+        document.querySelectorAll('[data-sort]').forEach(el => {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sortType = this.getAttribute('data-sort');
+                sortTrains(sortType);
+            });
+        });
+        
+        const sortTrains = (sortType) => {
+            const trainCards = Array.from(document.querySelectorAll('.train-card'));
+            const container = trainCards[0].parentNode;
+            
+            trainCards.sort((a, b) => {
+                if (sortType === 'departure') {
+                    return parseInt(a.dataset.departureHour) - parseInt(b.dataset.departureHour);
+                } else if (sortType === 'duration') {
+                    // This would require additional data attributes to implement properly
+                    return 0;
+                } else if (sortType === 'price-asc') {
+                    return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                } else if (sortType === 'price-desc') {
+                    return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                }
+                return 0;
+            });
+            
+            trainCards.forEach(card => container.appendChild(card));
+        };
+    });
+</script>
+{% endblock %}
+{% endblock %}

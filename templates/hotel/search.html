@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Hotel Booking{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Ensure text visibility */
+    .booking-form label, .booking-form h3, .booking-form p {
+        color: #333 !important;
+        font-weight: 500;
+    }
+    
+    .booking-header {
+        background: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=300&fit=crop') center/cover;
+        padding: 60px 0;
+        border-radius: 4px;
+        margin-bottom: 30px;
+        position: relative;
+    }
+    
+    .booking-header::before {
+        content: '';
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+        background: rgba(0,0,0,0.4);
+        border-radius: 4px;
+    }
+    
+    .booking-header h2 {
+        color: white !important;
+        position: relative;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="booking-header text-center">
+        <h2>Find Your Perfect Hotel</h2>
+    </div>
+    
+    <div class="card">
+        <div class="card-body booking-form">
+            <form method="post" action="{% url 'hotel:search' %}">
+                {% csrf_token %}
+                <!-- Form fields with proper text styling -->
+                <!-- ... your existing form fields ... -->
+            </form>
+        </div>
+    </div>
+    
+    <!-- Popular Hotels -->
+    <h3 class="mt-5 mb-4">Popular Hotel Destinations</h3>
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=500&h=300&fit=crop" class="card-img-top" alt="Luxury Resort">
+                <div class="card-body">
+                    <h5 class="card-title">Beach Resorts</h5>
+                    <p class="card-text">Relax by the ocean</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&h=300&fit=crop" class="card-img-top" alt="City Hotel">
+                <div class="card-body">
+                    <h5 class="card-title">City Hotels</h5>
+                    <p class="card-text">In the heart of metropolitan areas</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <img src="https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?w=500&h=300&fit=crop" class="card-img-top" alt="Mountain Retreat">
+                <div class="card-body">
+                    <h5 class="card-title">Mountain Retreats</h5>
+                    <p class="card-text">Escape to nature</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=500&h=300&fit=crop" class="card-img-top" alt="Boutique Hotel">
+                <div class="card-body">
+                    <h5 class="card-title">Boutique Hotels</h5>
+                    <p class="card-text">Unique style and character</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

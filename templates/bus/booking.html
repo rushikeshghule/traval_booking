@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Book Bus Ticket - Travel Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'bus:search' %}">Bus Search</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'bus:detail' pk=schedule.pk %}">Bus Details</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Book Ticket</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Passenger Information</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="booking-form">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.passenger_name|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.passenger_phone|as_crispy_field }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.passenger_email|as_crispy_field }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form.special_request|as_crispy_field }}
+                        </div>
+                        
+                        <h5 class="mb-3">Selected Seats</h5>
+                        <div class="row mb-4">
+                            {% for seat in available_seats %}
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input seat-checkbox" type="checkbox" name="seats" value="{{ seat.id }}" id="seat-{{ seat.id }}">
+                                        <label class="form-check-label" for="seat-{{ seat.id }}">
+                                            Seat {{ seat.seat_number }} ({{ seat.get_seat_type_display }})
+                                        </label>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <h5 class="mb-3">Payment Information</h5>
+                        <div class="mb-3">
+                            <label for="payment-method" class="form-label">Payment Method</label>
+                            <select class="form-select" id="payment-method" required>
+                                <option value="">Select Payment Method</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="debit_card">Debit Card</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="apple_pay">Apple Pay</option>
+                                <option value="google_pay">Google Pay</option>
+                            </select>
+                        </div>
+                        
+                        <div id="credit-card-form">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="card-number" class="form-label">Card Number</label>
+                                    <input type="text" class="form-control" id="card-number" placeholder="**** **** **** ****">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="card-name" class="form-label">Name on Card</label>
+                                    <input type="text" class="form-control" id="card-name" placeholder="John Doe">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-4 mb-3 mb-md-0">
+                                    <label for="expiry-month" class="form-label">Expiry Month</label>
+                                    <select class="form-select" id="expiry-month">
+                                        <option value="01">01</option>
+                                        <option value="02">02</option>
+                                        <option value="03">03</option>
+                                        <option value="04">04</option>
+                                        <option value="05">05</option>
+                                        <option value="06">06</option>
+                                        <option value="07">07</option>
+                                        <option value="08">08</option>
+                                        <option value="09">09</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3 mb-md-0">
+                                    <label for="expiry-year" class="form-label">Expiry Year</label>
+                                    <select class="form-select" id="expiry-year">
+                                        <option value="2025">2025</option>
+                                        <option value="2026">2026</option>
+                                        <option value="2027">2027</option>
+                                        <option value="2028">2028</option>
+                                        <option value="2029">2029</option>
+                                        <option value="2030">2030</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" placeholder="123">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="terms-check" required>
+                            <label class="form-check-label" for="terms-check">
+                                I agree to the <a href="{% url 'core:terms' %}">Terms & Conditions</a> and <a href="{% url 'core:privacy' %}">Privacy Policy</a>
+                            </label>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'bus:detail' pk=schedule.pk %}" class="btn btn-outline-secondary">Back</a>
+                            <button type="submit" class="btn btn-primary" id="submit-booking">Proceed to Payment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Booking Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="booking-summary">
+                        <div class="d-flex align-items-center mb-3">
+                            {% if schedule.bus.operator.logo %}
+                                <img src="{{ schedule.bus.operator.logo.url }}" alt="{{ schedule.bus.operator.name }}" class="me-3" style="max-height: 40px;">
+                            {% else %}
+                                <i class="fas fa-bus fa-2x me-3 text-primary"></i>
+                            {% endif %}
+                            <div>
+                                <h6 class="mb-0">{{ schedule.bus.operator.name }}</h6>
+                                <small class="text-muted">{{ schedule.bus.get_bus_type_display }} Bus</small>
+                            </div>
+                        </div>
+                        
+                        <p class="mb-1"><strong>From:</strong> {{ schedule.route.source }}</p>
+                        <p class="mb-1"><strong>To:</strong> {{ schedule.route.destination }}</p>
+                        <p class="mb-1"><strong>Departure:</strong> {{ schedule.departure_time|date:"d M Y, h:i A" }}</p>
+                        <p class="mb-1"><strong>Arrival:</strong> {{ schedule.arrival_time|date:"d M Y, h:i A" }}</p>
+                        <p class="mb-1"><strong>Duration:</strong> {{ schedule.route.duration }}</p>
+                        <p class="mb-1"><strong>Passengers:</strong> {{ passengers }}</p>
+                        <p class="mb-1"><strong>Selected Seats:</strong> <span id="selected-seats-summary">None</span></p>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Ticket Fare ({{ passengers }} x ${{ schedule.fare }})</span>
+                            <span>${{ total_price }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Service Fee</span>
+                            <span>$2.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Booking Fee</span>
+                            <span>$0.00</span>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between mb-0">
+                            <h5>Total Amount</h5>
+                            <h5 id="total-amount">${{ total_price|add:"2.00" }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Need Help?</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">Contact our support team:</p>
+                    <p class="mb-1"><i class="fas fa-phone me-2"></i> +1 234 567 8900</p>
+                    <p class="mb-3"><i class="fas fa-envelope me-2"></i> support@travelbooking.com</p>
+                    
+                    <div class="mb-0">
+                        <p class="mb-2"><i class="fas fa-info-circle me-2"></i> Booking Policy:</p>
+                        <ul class="mb-0 ps-4">
+                            <li>Free cancellation up to 24 hours before departure</li>
+                            <li>50% refund for cancellations within 24 hours</li>
+                            <li>No refund for no-shows</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('booking-form');
+        const seatCheckboxes = document.querySelectorAll('.seat-checkbox');
+        const selectedSeatsElement = document.getElementById('selected-seats-summary');
+        const paymentMethodSelect = document.getElementById('payment-method');
+        const creditCardForm = document.getElementById('credit-card-form');
+        const submitButton = document.getElementById('submit-booking');
+        
+        // Initially hide credit card form
+        creditCardForm.style.display = 'none';
+        
+        // Show/hide credit card form based on payment method
+        paymentMethodSelect.addEventListener('change', function() {
+            if (this.value === 'credit_card' || this.value === 'debit_card') {
+                creditCardForm.style.display = 'block';
+            } else {
+                creditCardForm.style.display = 'none';
+            }
+        });
+        
+        // Update selected seats summary
+        function updateSelectedSeats() {
+            const selectedSeats = Array.from(seatCheckboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => {
+                    const label = document.querySelector(`label[for="${checkbox.id}"]`);
+                    return label.textContent.trim().replace('Seat ', '').split(' ')[0];
+                });
+            
+            if (selectedSeats.length > 0) {
+                selectedSeatsElement.textContent = selectedSeats.join(', ');
+                submitButton.disabled = false;
+            } else {
+                selectedSeatsElement.textContent = 'None';
+                submitButton.disabled = true;
+            }
+        }
+        
+        // Add event listeners to seat checkboxes
+        seatCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedSeats);
+        });
+        
+        // Validate form before submission
+        form.addEventListener('submit', function(e) {
+            const selectedSeats = Array.from(seatCheckboxes).filter(checkbox => checkbox.checked);
+            
+            if (selectedSeats.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one seat.');
+                return false;
+            }
+            
+            const paymentMethod = paymentMethodSelect.value;
+            if (!paymentMethod) {
+                e.preventDefault();
+                alert('Please select a payment method.');
+                return false;
+            }
+            
+            // If credit/debit card is selected, validate card details
+            if ((paymentMethod === 'credit_card' || paymentMethod === 'debit_card')) {
+                const cardNumber = document.getElementById('card-number').value;
+                const cardName = document.getElementById('card-name').value;
+                const cvv = document.getElementById('cvv').value;
+                
+                if (!cardNumber || !cardName || !cvv) {
+                    e.preventDefault();
+                    alert('Please fill in all card details.');
+                    return false;
+                }
+            }
+            
+            // Validate terms checkbox
+            const termsCheck = document.getElementById('terms-check');
+            if (!termsCheck.checked) {
+                e.preventDefault();
+                alert('Please agree to the Terms & Conditions.');
+                return false;
+            }
+        });
+        
+        // Set initial state
+        updateSelectedSeats();
+    });
+</script>
+{% endblock %}
+{% endblock %}

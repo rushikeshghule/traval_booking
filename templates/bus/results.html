@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+
+{% block title %}Bus Search Results - Travel Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-bus me-2"></i>Bus Search Results</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p class="mb-1 text-muted">From</p>
+                            <h5>{{ source }}</h5>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="mb-1 text-muted">To</p>
+                            <h5>{{ destination }}</h5>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="mb-1 text-muted">Date</p>
+                            <h5>{{ date|date:"D, d M Y" }}</h5>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="mb-1 text-muted">Passengers</p>
+                            <h5>{{ passengers }}</h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{% url 'bus:search' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-search me-1"></i> Modify Search
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Filter Results</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-2">Bus Type</h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-bus" type="checkbox" value="normal" id="normalBus" checked>
+                        <label class="form-check-label" for="normalBus">
+                            Normal
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-bus" type="checkbox" value="ac" id="acBus" checked>
+                        <label class="form-check-label" for="acBus">
+                            AC
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-bus" type="checkbox" value="sleeper" id="sleeperBus" checked>
+                        <label class="form-check-label" for="sleeperBus">
+                            Sleeper
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input filter-bus" type="checkbox" value="luxury" id="luxuryBus" checked>
+                        <label class="form-check-label" for="luxuryBus">
+                            Luxury
+                        </label>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="mb-2">Departure Time</h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-time" type="checkbox" value="early_morning" id="earlyMorning" checked>
+                        <label class="form-check-label" for="earlyMorning">
+                            Early Morning (00:00 - 06:00)
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-time" type="checkbox" value="morning" id="morning" checked>
+                        <label class="form-check-label" for="morning">
+                            Morning (06:00 - 12:00)
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input filter-time" type="checkbox" value="afternoon" id="afternoon" checked>
+                        <label class="form-check-label" for="afternoon">
+                            Afternoon (12:00 - 18:00)
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input filter-time" type="checkbox" value="night" id="night" checked>
+                        <label class="form-check-label" for="night">
+                            Night (18:00 - 24:00)
+                        </label>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="mb-2">Price Range</h6>
+                    <input type="range" class="form-range" min="0" max="200" step="10" id="priceRange" value="200">
+                    <div class="d-flex justify-content-between">
+                        <span>$0</span>
+                        <span id="priceValue">$200</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5>{{ schedules.count }} Buses Found</h5>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Sort by
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+                            <li><a class="dropdown-item" href="#" data-sort="departure">Departure Time</a></li>
+                            <li><a class="dropdown-item" href="#" data-sort="duration">Duration</a></li>
+                            <li><a class="dropdown-item" href="#" data-sort="price-asc">Price: Low to High</a></li>
+                            <li><a class="dropdown-item" href="#" data-sort="price-desc">Price: High to Low</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            {% if schedules %}
+                {% for schedule in schedules %}
+                    <div class="card mb-3">
+                        <div class="row g-0">
+                            <div class="col-md-3">
+                                <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=300&h=200" class="img-fluid rounded-start" alt="Bus">
+                            </div>
+                            <div class="col-md-9">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2 text-center mb-3 mb-md-0">
+                                            {% if schedule.bus.operator.logo %}
+                                                <img src="{{ schedule.bus.operator.logo.url }}" alt="{{ schedule.bus.operator.name }}" class="img-fluid mb-2" style="max-height: 40px;">
+                                            {% else %}
+                                                <i class="fas fa-bus fa-2x mb-2 text-primary"></i>
+                                            {% endif %}
+                                            <h6 class="mb-0">{{ schedule.bus.operator.name }}</h6>
+                                            <small class="text-muted">{{ schedule.bus.get_bus_type_display }}</small>
+                                        </div>
+                                        <div class="col-md-3 mb-3 mb-md-0">
+                                            <div class="text-center">
+                                                <h5 class="mb-0">{{ schedule.departure_time|date:"h:i A" }}</h5>
+                                                <p class="text-muted mb-0">{{ schedule.departure_time|date:"d M Y" }}</p>
+                                                <small>{{ schedule.route.source }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 text-center mb-3 mb-md-0">
+                                            <i class="fas fa-arrow-right text-muted"></i>
+                                            <small class="d-block text-muted">{{ schedule.route.duration }}</small>
+                                        </div>
+                                        <div class="col-md-3 mb-3 mb-md-0">
+                                            <div class="text-center">
+                                                <h5 class="mb-0">{{ schedule.arrival_time|date:"h:i A" }}</h5>
+                                                <p class="text-muted mb-0">{{ schedule.arrival_time|date:"d M Y" }}</p>
+                                                <small>{{ schedule.route.destination }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="text-center">
+                                                <h5 class="mb-0 text-primary">${{ schedule.fare }}</h5>
+                                                <p class="text-muted mb-2">per person</p>
+                                                <a href="{% url 'bus:detail' pk=schedule.pk %}" class="btn btn-primary btn-sm d-block">Select</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mt-3">
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between border-top pt-2">
+                                                <small><i class="fas fa-couch me-1"></i> {{ schedule.available_seats }} seats available</small>
+                                                <small><i class="fas fa-luggage-cart me-1"></i> {{ schedule.bus.amenities|default:"Luggage allowed" }}</small>
+                                                <small><a href="#" data-bs-toggle="modal" data-bs-target="#busInfoModal{{ schedule.pk }}">Bus Info</a></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bus Info Modal -->
+                    <div class="modal fade" id="busInfoModal{{ schedule.pk }}" tabindex="-1" aria-labelledby="busInfoModalLabel{{ schedule.pk }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="busInfoModalLabel{{ schedule.pk }}">Bus Information</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <h6>{{ schedule.bus.operator.name }} - {{ schedule.bus.bus_number }}</h6>
+                                    <p><strong>Bus Type:</strong> {{ schedule.bus.get_bus_type_display }}</p>
+                                    <p><strong>Total Seats:</strong> {{ schedule.bus.total_seats }}</p>
+                                    <p><strong>Amenities:</strong> {{ schedule.bus.amenities|default:"Not specified" }}</p>
+                                    <hr>
+                                    <p><strong>Departure:</strong> {{ schedule.departure_time|date:"d M Y, h:i A" }} from {{ schedule.route.source }}</p>
+                                    <p><strong>Arrival:</strong> {{ schedule.arrival_time|date:"d M Y, h:i A" }} at {{ schedule.route.destination }}</p>
+                                    <p><strong>Journey Duration:</strong> {{ schedule.route.duration }}</p>
+                                    <p><strong>Distance:</strong> {{ schedule.route.distance }} km</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <a href="{% url 'bus:detail' pk=schedule.pk %}" class="btn btn-primary">Select This Bus</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="card shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+                        <h4>No Buses Found</h4>
+                        <p class="text-muted">We couldn't find any buses matching your search criteria.</p>
+                        <a href="{% url 'bus:search' %}" class="btn btn-primary mt-2">Modify Search</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Price range slider
+    const priceRange = document.getElementById('priceRange');
+    const priceValue = document.getElementById('priceValue');
+    
+    priceRange.addEventListener('input', function() {
+        priceValue.textContent = '$' + this.value;
+        filterBuses();
+    });
+    
+    // Filter buses
+    const filterBuses = () => {
+        const selectedBusTypes = Array.from(document.querySelectorAll('.filter-bus:checked')).map(el => el.value);
+        const selectedTimeSlots = Array.from(document.querySelectorAll('.filter-time:checked')).map(el => el.value);
+        const maxPrice = priceRange.value;
+        
+        document.querySelectorAll('.bus-card').forEach(card => {
+            const busType = card.dataset.busType;
+            const price = parseFloat(card.dataset.price);
+            const departureHour = parseInt(card.dataset.departureHour);
+            
+            // Check bus type
+            const busTypeMatch = selectedBusTypes.includes(busType);
+            
+            // Check time slot
+            let timeSlotMatch = false;
+            if (selectedTimeSlots.includes('early_morning') && departureHour >= 0 && departureHour < 6) {
+                timeSlotMatch = true;
+            } else if (selectedTimeSlots.includes('morning') && departureHour >= 6 && departureHour < 12) {
+                timeSlotMatch = true;
+            } else if (selectedTimeSlots.includes('afternoon') && departureHour >= 12 && departureHour < 18) {
+                timeSlotMatch = true;
+            } else if (selectedTimeSlots.includes('night') && departureHour >= 18 && departureHour < 24) {
+                timeSlotMatch = true;
+            }
+            
+            // Check price
+            const priceMatch = price <= maxPrice;
+            
+            // Show/hide card
+            if (busTypeMatch && timeSlotMatch && priceMatch) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Update count
+        const visibleCards = document.querySelectorAll('.bus-card[style="display: block"]').length;
+        document.querySelector('h5').textContent = visibleCards + ' Buses Found';
+    };
+    
+    // Add event listeners to all filters
+    document.querySelectorAll('.filter-bus, .filter-time').forEach(filter => {
+        filter.addEventListener('change', filterBuses);
+    });
+    
+    // Sorting functionality
+    document.querySelectorAll('[data-sort]').forEach(sortBtn => {
+        sortBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const sortBy = this.dataset.sort;
+            const cards = Array.from(document.querySelectorAll('.bus-card'));
+            const container = cards[0].parentElement;
+            
+            // Sort cards
+            cards.sort((a, b) => {
+                if (sortBy === 'departure') {
+                    return a.dataset.departureHour - b.dataset.departureHour;
+                } else if (sortBy === 'price-asc') {
+                    return a.dataset.price - b.dataset.price;
+                } else if (sortBy === 'price-desc') {
+                    return b.dataset.price - a.dataset.price;
+                }
+                // Add more sorting options if needed
+                return 0;
+            });
+            
+            // Re-append sorted cards
+            cards.forEach(card => {
+                container.appendChild(card);
+            });
+            
+            // Update dropdown text
+            document.getElementById('sortDropdown').textContent = 'Sort by: ' + this.textContent;
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

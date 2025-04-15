@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Booking - Travel Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'bus:search' %}">Bus Search</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'bus:detail' pk=booking.schedule.pk %}">Bus Details</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'bus:booking' pk=booking.schedule.pk %}">Book Ticket</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Confirm Booking</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-check-circle me-2"></i>Confirm Your Booking</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <h5 class="alert-heading">Almost Done!</h5>
+                        <p class="mb-0">Please review your booking details below before proceeding to payment. Once you confirm, your booking will be processed.</p>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Booking Details</h5>
+                            <p class="mb-1"><strong>Booking Reference:</strong> {{ booking.booking_reference }}</p>
+                            <p class="mb-1"><strong>Status:</strong> <span class="badge bg-warning">Pending</span></p>
+                            <p class="mb-1"><strong>Booking Date:</strong> {{ booking.booking_date|date:"d M Y, h:i A" }}</p>
+                            <p class="mb-1"><strong>Passenger Count:</strong> {{ booking.passenger_count }}</p>
+                            <p class="mb-0"><strong>Selected Seats:</strong> 
+                                {% for seat in booking.seats.all %}
+                                    {{ seat.seat_number }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Bus Details</h5>
+                            <p class="mb-1"><strong>Operator:</strong> {{ booking.schedule.bus.operator.name }}</p>
+                            <p class="mb-1"><strong>Bus Number:</strong> {{ booking.schedule.bus.bus_number }}</p>
+                            <p class="mb-1"><strong>Bus Type:</strong> {{ booking.schedule.bus.get_bus_type_display }}</p>
+                            <p class="mb-1"><strong>From:</strong> {{ booking.schedule.route.source }}</p>
+                            <p class="mb-1"><strong>To:</strong> {{ booking.schedule.route.destination }}</p>
+                            <p class="mb-1"><strong>Departure:</strong> {{ booking.schedule.departure_time|date:"d M Y, h:i A" }}</p>
+                            <p class="mb-0"><strong>Arrival:</strong> {{ booking.schedule.arrival_time|date:"d M Y, h:i A" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Payment Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Ticket Fare ({{ booking.passenger_count }} x ${{ booking.schedule.fare }})</span>
+                                <span>${{ booking.schedule.fare|floatformat:2|multiply:booking.passenger_count }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Service Fee</span>
+                                <span>$2.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Booking Fee</span>
+                                <span>$0.00</span>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div class="d-flex justify-content-between">
+                                <h5 class="mb-0">Total Amount</h5>
+                                <h5 class="mb-0">${{ booking.total_price|floatformat:2 }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">Cancellation Policy</h6>
+                                    <ul class="ps-3 mb-0">
+                                        <li>Free cancellation up to 24 hours before departure</li>
+                                        <li>50% refund for cancellations within 24 hours</li>
+                                        <li>No refund for no-shows</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">Important Information</h6>
+                                    <ul class="ps-3 mb-0">
+                                        <li>Please arrive 15 minutes before departure</li>
+                                        <li>Carry a valid ID proof for verification</li>
+                                        <li>Luggage limit: 15kg per passenger</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <form method="post" action="{% url 'bus:booking_confirm' pk=booking.pk %}">
+                        {% csrf_token %}
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="confirm-check" required>
+                            <label class="form-check-label" for="confirm-check">
+                                I confirm that I have reviewed all the booking details and agree to proceed with the payment
+                            </label>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'bus:booking' pk=booking.schedule.pk %}" class="btn btn-outline-secondary">Back</a>
+                            <button type="submit" class="btn btn-primary">Confirm & Pay Now</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="payment-methods mt-4">
+    <h5>Payment Methods</h5>
+    <div class="d-flex gap-3 mt-3">
+        <img src="https://img.icons8.com/color/48/000000/visa.png" alt="Visa">
+        <img src="https://img.icons8.com/color/48/000000/mastercard.png" alt="Mastercard">
+        <img src="https://img.icons8.com/color/48/000000/paypal.png" alt="PayPal">
+        <img src="https://img.icons8.com/color/48/000000/american-express.png" alt="American Express">
+    </div>
+</div>
+{% endblock %}
