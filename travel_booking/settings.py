@@ -186,6 +186,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://travalbooking-production.up.railway.app"
 
 ]
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # Crispy Forms Settings
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
