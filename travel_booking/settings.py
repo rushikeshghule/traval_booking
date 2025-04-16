@@ -183,8 +183,8 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 CSRF_TRUSTED_ORIGINS = [
-    'https://travalbooking-production.up.railway.app/',  # Railway domain
-    
+    "[https://travalbooking-production.up.railway.app](https://travalbooking-production.up.railway.app)",
+    "http://localhost:8000",
 ]
 
 # Crispy Forms Settings
