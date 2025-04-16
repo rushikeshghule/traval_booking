@@ -23,11 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-9-!+gc5)^28q^%^0#9!t)eb71yh$++sb)nz)iri-fx7s!v1qn6"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://travalbooking-production.up.railway.app/']
 
 
 
@@ -179,7 +179,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 CSRF_TRUSTED_ORIGINS = [
-    'https://travalbooking-production.up.railway.app',  # Railway domain
+    'https://travalbooking-production.up.railway.app/',  # Railway domain
     
 ]
 
