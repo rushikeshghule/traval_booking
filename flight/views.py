@@ -52,7 +52,7 @@ class FlightResultsView(View):
         if not search_data:
             messages.error(request, 'Please search for flights first.')
             return redirect('flight:search')
-        
+        print(search_data)
         source = search_data['source']
         destination = search_data['destination']
         departure_date_str = search_data['departure_date']
@@ -73,6 +73,17 @@ class FlightResultsView(View):
             Q(name__icontains=destination) | Q(code__icontains=destination) | Q(city__icontains=destination)
         )
         
+        print('DEBUG: source_airports:', list(source_airports))
+        print('DEBUG: destination_airports:', list(destination_airports))
+        print('DEBUG: departure_date:', departure_date)
+        print('DEBUG: All flights with matching airports:')
+        flights = Flight.objects.filter(
+            source__in=source_airports,
+            destination__in=destination_airports
+        )
+        for f in flights:
+            print(f"Flight: {f} | Departure: {f.departure_time.date()} | Source: {f.source} | Destination: {f.destination}")
+        
         # Get outbound flights
         outbound_flights = Flight.objects.filter(
             source__in=source_airports,
@@ -80,6 +91,8 @@ class FlightResultsView(View):
             departure_time__date=departure_date,
             available_seats__gte=passengers
         ).order_by('departure_time')
+        
+        print('DEBUG: outbound_flights:', list(outbound_flights))
         
         # Get return flights if round trip
         return_flights = None
@@ -90,6 +103,8 @@ class FlightResultsView(View):
                 departure_time__date=return_date,
                 available_seats__gte=passengers
             ).order_by('departure_time')
+        
+        print('DEBUG: return_flights:', list(return_flights) if return_flights is not None else None)
         
         context = {
             'outbound_flights': outbound_flights,

@@ -45,8 +45,33 @@
         <div class="card-body booking-form">
             <form method="post" action="{% url 'hotel:search' %}">
                 {% csrf_token %}
-                <!-- Form fields with proper text styling -->
-                <!-- ... your existing form fields ... -->
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="destination" class="form-label">Destination</label>
+                        <input type="text" class="form-control" id="destination" name="destination" placeholder="Enter city, hotel, or landmark" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="check_in" class="form-label">Check-in</label>
+                        <input type="date" class="form-control" id="check_in" name="check_in" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="check_out" class="form-label">Check-out</label>
+                        <input type="date" class="form-control" id="check_out" name="check_out" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="guests" class="form-label">Guests</label>
+                        <input type="number" class="form-control" id="guests" name="guests" min="1" value="1" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="rooms" class="form-label">Rooms</label>
+                        <input type="number" class="form-control" id="rooms" name="rooms" min="1" value="1" required>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col text-center">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">Search Hotels</button>
+                    </div>
+                </div>
             </form>
         </div>
     </div>

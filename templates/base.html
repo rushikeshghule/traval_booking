@@ -488,7 +488,7 @@
 </head>
 <body>
     <!-- Sidebar -->
-    <nav class="sidebar {% if 'login' in request.path or 'signup' in request.path %}auth-page-sidebar{% endif %}" id="sidebar">
+    <nav class="sidebar {% if 'login' in request.path or 'signup' in request.path or 'password/reset' in request.path %}auth-page-sidebar{% endif %}" id="sidebar">
         <div class="sidebar-header" style=" background-image: url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExbjBybmZoZXF0aTRhdHZiaHdqa29hczNkaXVreGI0aGF0ZjEzZG9vcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/mPsvssR8lWCf6/giphy.gif'); background-size: cover; background-position: center; position: relative;">
             <!-- Overlay to ensure text readability -->
             <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(2, 9, 46, 0.7);"></div>

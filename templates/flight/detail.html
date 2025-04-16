@@ -8,7 +8,7 @@
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'flight:search' %}">Flight Search</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Flight Details</li>
                 </ol>
@@ -350,7 +350,7 @@
                         <div class="form-check mb-4">
                             <input class="form-check-input" type="checkbox" value="1" id="terms" name="terms" required>
                             <label class="form-check-label" for="terms">
-                                I agree to the <a href="{% url 'core:terms' %}" target="_blank">Terms and Conditions</a> and <a href="{% url 'core:privacy' %}" target="_blank">Privacy Policy</a>
+                                I agree to the Terms and Conditions
                             </label>
                         </div>
                         
@@ -365,7 +365,7 @@
         <div class="col-md-4">
             <div class="card shadow-sm mb-4 sticky-top" style="top: 20px; z-index: 0;">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Price Summary</h5>
+                    <h5 class="mb-0" style="color: white;">Price Summary</h5>
                 </div>
                 <div class="card-body">
                     <table class="table">
@@ -417,10 +417,10 @@
                     <p><i class="fas fa-envelope me-2"></i> support@travelbooking.com</p>
                     
                     <div class="d-grid gap-2 mt-3">
-                        <a href="{% url 'core:faq' %}" class="btn btn-outline-primary btn-sm">
+                        <a  class="btn btn-outline-primary btn-sm">
                             <i class="fas fa-question-circle me-1"></i> View FAQs
                         </a>
-                        <a href="{% url 'core:contact' %}" class="btn btn-outline-primary btn-sm">
+                        <a  class="btn btn-outline-primary btn-sm">
                             <i class="fas fa-paper-plane me-1"></i> Contact Us
                         </a>
                     </div>
@@ -446,29 +446,29 @@
 </style>
 
 {% block extra_js %}
-<script>
+<script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
         // Special assistance toggle
-        const toggleSpecialAssistance = () => {
+        function toggleSpecialAssistance() {
             {% for i in passenger_range %}
-            const specialAssistance{{ i }} = document.getElementById('special_assistance_{{ i }}');
-            const specialAssistanceDetails{{ i }} = document.getElementById('special_assistance_details_{{ i }}');
+            var specialAssistance = document.getElementById('special_assistance_{{ i }}');
+            var specialAssistanceDetails = document.getElementById('special_assistance_details_{{ i }}');
             
-            if (specialAssistance{{ i }}) {
-                specialAssistance{{ i }}.addEventListener('change', function() {
+            if (specialAssistance) {
+                specialAssistance.addEventListener('change', function() {
                     if (this.checked) {
-                        specialAssistanceDetails{{ i }}.classList.remove('d-none');
+                        specialAssistanceDetails.classList.remove('d-none');
                     } else {
-                        specialAssistanceDetails{{ i }}.classList.add('d-none');
+                        specialAssistanceDetails.classList.add('d-none');
                     }
                 });
             }
             {% endfor %}
-        };
+        }
         
         // Meal preference toggle
-        const mealPreference = document.getElementById('meal_preference');
-        const mealPreferenceDetails = document.getElementById('meal_preference_details');
+        var mealPreference = document.getElementById('meal_preference');
+        var mealPreferenceDetails = document.getElementById('meal_preference_details');
         
         if (mealPreference) {
             mealPreference.addEventListener('change', function() {
@@ -481,71 +481,79 @@
         }
         
         // Calculate total price
-        const calculateTotal = () => {
-            let total = {{ total_price }};
-            const totalPriceElement = document.getElementById('total_price');
+        function calculateTotal() {
+            var totalPrice = {{ total_price|default:0 }};
+            var total = parseFloat(totalPrice);
+            var totalPriceElement = document.getElementById('total_price');
             
             // Insurance
-            const travelInsurance = document.getElementById('travel_insurance');
-            const insuranceRow = document.getElementById('insurance_row');
-            const insurancePrice = document.getElementById('insurance_price');
+            var travelInsurance = document.getElementById('travel_insurance');
+            var insuranceRow = document.getElementById('insurance_row');
+            var insurancePrice = document.getElementById('insurance_price');
             
             if (travelInsurance && travelInsurance.checked) {
-                insuranceRow.classList.remove('d-none');
-                insurancePrice.textContent = '25';
+                if (insuranceRow) insuranceRow.classList.remove('d-none');
+                if (insurancePrice) insurancePrice.textContent = '25';
                 total += 25;
-            } else if (insuranceRow) {
-                insuranceRow.classList.add('d-none');
-                insurancePrice.textContent = '0';
+            } else {
+                if (insuranceRow) insuranceRow.classList.add('d-none');
+                if (insurancePrice) insurancePrice.textContent = '0';
             }
             
             // Priority boarding
-            const priorityBoarding = document.getElementById('priority_boarding');
-            const priorityRow = document.getElementById('priority_row');
-            const priorityPrice = document.getElementById('priority_price');
+            var priorityBoarding = document.getElementById('priority_boarding');
+            var priorityRow = document.getElementById('priority_row');
+            var priorityPrice = document.getElementById('priority_price');
             
             if (priorityBoarding && priorityBoarding.checked) {
-                priorityRow.classList.remove('d-none');
-                priorityPrice.textContent = '15';
+                if (priorityRow) priorityRow.classList.remove('d-none');
+                if (priorityPrice) priorityPrice.textContent = '15';
                 total += 15;
-            } else if (priorityRow) {
-                priorityRow.classList.add('d-none');
-                priorityPrice.textContent = '0';
+            } else {
+                if (priorityRow) priorityRow.classList.add('d-none');
+                if (priorityPrice) priorityPrice.textContent = '0';
             }
             
             // Extra baggage
-            const extraBaggage = document.getElementById('extra_baggage');
-            const baggageRow = document.getElementById('baggage_row');
-            const baggagePrice = document.getElementById('baggage_price');
+            var extraBaggage = document.getElementById('extra_baggage');
+            var baggageRow = document.getElementById('baggage_row');
+            var baggagePrice = document.getElementById('baggage_price');
             
             if (extraBaggage && extraBaggage.checked) {
-                baggageRow.classList.remove('d-none');
-                baggagePrice.textContent = '50';
+                if (baggageRow) baggageRow.classList.remove('d-none');
+                if (baggagePrice) baggagePrice.textContent = '50';
                 total += 50;
-            } else if (baggageRow) {
-                baggageRow.classList.add('d-none');
-                baggagePrice.textContent = '0';
+            } else {
+                if (baggageRow) baggageRow.classList.add('d-none');
+                if (baggagePrice) baggagePrice.textContent = '0';
             }
             
-            totalPriceElement.textContent = total.toFixed(2);
-        };
-        
-        // Add event listeners for add-ons
-        const addOns = [
-            document.getElementById('travel_insurance'),
-            document.getElementById('priority_boarding'),
-            document.getElementById('extra_baggage')
-        ];
-        
-        addOns.forEach(addOn => {
-            if (addOn) {
-                addOn.addEventListener('change', calculateTotal);
+            if (totalPriceElement) {
+                totalPriceElement.textContent = total.toFixed(2);
             }
-        });
+        }
         
         // Initialize functions
-        toggleSpecialAssistance();
-        calculateTotal();
+        try {
+            toggleSpecialAssistance();
+        } catch(e) {
+            console.error("Error in toggleSpecialAssistance:", e);
+        }
+        
+        try {
+            // Add event listeners for add-ons
+            var addOnIds = ['travel_insurance', 'priority_boarding', 'extra_baggage'];
+            for (var j = 0; j < addOnIds.length; j++) {
+                var addOn = document.getElementById(addOnIds[j]);
+                if (addOn) {
+                    addOn.addEventListener('change', calculateTotal);
+                }
+            }
+            
+            calculateTotal();
+        } catch(e) {
+            console.error("Error in price calculation:", e);
+        }
     });
 </script>
 {% endblock %}
