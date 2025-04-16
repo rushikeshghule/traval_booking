@@ -27,7 +27,11 @@ DEBUG = True
 
 
 
-ALLOWED_HOSTS = ['https://travalbooking-production.up.railway.app/']
+ALLOWED_HOSTS = [
+    "travalbooking-production.up.railway.app",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 
